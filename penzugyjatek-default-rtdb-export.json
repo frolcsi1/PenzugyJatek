@@ -1,0 +1,25 @@
+{
+  "Rooms": {
+    "Room0": {
+      "Code": 0,
+      "PIN": 0,
+      "host": "<uid>",
+      "players": {
+        "uid": "<uid>"
+      },
+      "previousQuestionsIds": "-1;",
+      "questionId": -1,
+      "status": 0
+    }
+  },
+  "answers": [
+    "b"
+  ],
+  "options": [
+    "a\\\\b\\\\c\\\\d"
+  ],
+  "questions": [
+    "What is it?"
+  ],
+  "usedCodes": "0;"
+}
