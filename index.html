@@ -10,15 +10,22 @@
     <div id="loginDiv">
         <input type="email" id="emailInput">
         <input type="password" id="pwdInput">
-        <input type="button" id="signinBtn" value="SignIn">
-        <input type="button" id="signupBtn" value="SignUp">
+        <input type="button" id="signinBtn" value="Bejelentkezés">
+        <input type="button" id="signupBtn" value="Regisztráció">
         <script type="module" src="./script.js"></script>
     </div>
-    <div id="lobbyDiv">
+    <div id="lobby0Div">
         <input type="number" name="lobbyId" id="lobbyIdInput" min="0" max="9999" placeholder="Szoba szám">
         <input type="number" name="lobbyPIN" id="lobbyPINInput" min="0" max="9999" placeholder="Szoba kód">
-        <input type="button" id="createBtn" value="Create">
-        <input type="button" id="joinBtn" value="Join">
+        <input type="button" id="createBtn" value="Létrehozás">
+        <input type="button" id="joinBtn" value="Csatlakozás">
+    </div>
+    <div id="lobby1Div">
+        <h1>Üdvözöllek a szobában!</h1>
+        <h2 id="LobbyIdh2">LobbyId: </h2>
+        <h3>Játékosok:</h3>
+        <ul id="playersListul"></ul>
+        <input type="button" value="Indítás">
     </div>
 </body>
 </html>

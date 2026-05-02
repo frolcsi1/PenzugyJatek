@@ -2,6 +2,10 @@
     display: block;
 }
 
-#lobbyDiv {
+#lobby0Div {
+    display: none;
+}
+
+#lobby1Div {
     display: none;
 }
