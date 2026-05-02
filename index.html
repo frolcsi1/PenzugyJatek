@@ -17,15 +17,22 @@
     <div id="lobby0Div">
         <input type="number" name="lobbyId" id="lobbyIdInput" min="0" max="9999" placeholder="Szoba szám">
         <input type="number" name="lobbyPIN" id="lobbyPINInput" min="0" max="9999" placeholder="Szoba kód">
+        <input type="text" name="lobbyNickname" id="lobbyNicknameInput" placeholder="Felhasználónév">
         <input type="button" id="createBtn" value="Létrehozás">
         <input type="button" id="joinBtn" value="Csatlakozás">
     </div>
-    <div id="lobby1Div">
+    <div id="lobby1hostDiv">
         <h1>Üdvözöllek a szobában!</h1>
-        <h2 id="LobbyIdh2">LobbyId: </h2>
+        <h2 id="LobbyIdhosth2">LobbyId: </h2>
         <h3>Játékosok:</h3>
-        <ul id="playersListul"></ul>
+        <ul id="playersListhostul"></ul>
         <input type="button" value="Indítás">
+    </div>
+    <div id="lobby1playerDiv">
+        <h1>Üdvözöllek a szobában!</h1>
+        <h2 id="LobbyIdplayerh2">LobbyId: </h2>
+        <h3>Játékosok:</h3>
+        <ul id="playersListplayerul"></ul>
     </div>
 </body>
 </html>

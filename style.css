@@ -6,6 +6,10 @@
     display: none;
 }
 
-#lobby1Div {
+#lobby1hostDiv {
+    display: none;
+}
+
+#lobby1playerDiv {
     display: none;
 }

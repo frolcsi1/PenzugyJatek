@@ -5,7 +5,10 @@
       "PIN": 0,
       "host": "<uid>",
       "players": {
-        "<uid>": "<username>"
+        "<uid>": {
+          "entered_PIN": "<PIN>",
+          "nickname": "<nickname>"
+        }
       },
       "previousQuestionsIds": "-1;",
       "questionId": -1,
