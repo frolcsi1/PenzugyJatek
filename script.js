@@ -23,6 +23,7 @@ const auth = getAuth();
 const database = getDatabase(app);
 
 let controller = new AbortController();
+let onValuePlayersStop = null;
 
 
 /************************************************************************************************************************************************
@@ -99,11 +100,16 @@ function gotoLobby1hostDiv(roomData) {
     document.querySelector("#lobby0Div").style.display = "none";
     document.querySelector("#lobby1playerDiv").style.display = "none";
     document.querySelector("#lobby1hostDiv").style.display = "block";
+
+    if (onValuePlayersStop) {
+        onValuePlayersStop();
+        onValuePlayersStop = null;
+    }
     
     document.querySelector("#LobbyIdhosth2").textContent = "LobbyId: " + String(roomData.Code);
     const listElement = document.querySelector("#playersListhostul");
     const lobbyIdStr = sessionStorage.getItem("lobbyId");
-    onValue(ref(database, 'Rooms/' + lobbyIdStr + "/players"), (snapshot2) => {
+    onValuePlayersStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/players"), (snapshot2) => {
         const players = snapshot2.val();
         listElement.innerHTML = "";
         if (players) {
@@ -131,10 +137,15 @@ function gotoLobby1playerDiv(roomData) {
     document.querySelector("#lobby0Div").style.display = "none";
     document.querySelector("#lobby1playerDiv").style.display = "block";
     
+    if (onValuePlayersStop) {
+        onValuePlayersStop();
+        onValuePlayersStop = null;
+    }
+    
     document.querySelector("#LobbyIdplayerh2").textContent = "LobbyId: " + String(roomData.Code);
     const listElement = document.querySelector("#playersListplayerul");
     const lobbyIdStr = sessionStorage.getItem("lobbyId");
-    onValue(ref(database, 'Rooms/' + lobbyIdStr + "/players"), (snapshot2) => {
+    onValuePlayersStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/players"), (snapshot2) => {
         const players = snapshot2.val();
         listElement.innerHTML = "";
         if (players) {
