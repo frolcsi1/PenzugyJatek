@@ -102,6 +102,7 @@ function gotoLobby1hostDiv(roomData) {
     
     document.querySelector("#LobbyIdhosth2").textContent = "LobbyId: " + String(roomData.Code);
     const listElement = document.querySelector("#playersListhostul");
+    const lobbyIdStr = sessionStorage.getItem("lobbyId");
     onValue(ref(database, 'Rooms/' + lobbyIdStr + "/players"), (snapshot2) => {
         const players = snapshot2.val();
         listElement.innerHTML = "";
@@ -113,6 +114,10 @@ function gotoLobby1hostDiv(roomData) {
                 listElement.appendChild(li);
             });
         }
+    }, (error) => {
+        console.error(error);
+        gotoLobby0Div();
+        return;
     });
     
     clearEventListeners();
@@ -128,6 +133,7 @@ function gotoLobby1playerDiv(roomData) {
     
     document.querySelector("#LobbyIdplayerh2").textContent = "LobbyId: " + String(roomData.Code);
     const listElement = document.querySelector("#playersListplayerul");
+    const lobbyIdStr = sessionStorage.getItem("lobbyId");
     onValue(ref(database, 'Rooms/' + lobbyIdStr + "/players"), (snapshot2) => {
         const players = snapshot2.val();
         listElement.innerHTML = "";
@@ -139,6 +145,10 @@ function gotoLobby1playerDiv(roomData) {
                 listElement.appendChild(li);
             });
         }
+    }, (error) => {
+        console.error(error);
+        gotoLobby0Div();
+        return;
     });
     
     clearEventListeners();
