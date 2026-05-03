@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+import { getDatabase, ref, get, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
 
 /************************************************************************************************************************************************
  * END OF IMPORTS
@@ -142,6 +142,9 @@ function gotoLobby1hostDiv(roomData) {
     clearEventListeners();
     document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
     document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
+    document.querySelector("#closeRoomBtn").addEventListener('click', () => {
+        closeRoom(lobbyIdStr);
+    }, { signal: controller.signal });
 }
 
 function gotoLobby1playerDiv(roomData) {
@@ -190,6 +193,9 @@ function gotoLobby1playerDiv(roomData) {
     clearEventListeners();
     document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
     document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
+    document.querySelector("#exitRoomBtn").addEventListener('click', () => {
+        exitRoom(lobbyIdStr);
+    }, { signal: controller.signal });
 }
 
 const signUp = () => {
@@ -378,6 +384,33 @@ const logOut = () => {
     });
 }
 
+const closeRoom = (lobbyIdStr) => {
+    remove(ref(database, "Rooms/" + lobbyIdStr)).then(() => {
+        console.info("Sikeres törlés");
+        sessionStorage.removeItem("lobbyId");
+        sessionStorage.removeItem("isHost");
+        gotoLobby0Div();
+    }).catch((error) => {
+        console.error(error);
+    });
+}
+
+const exitRoom = (lobbyIdStr) => {
+    user = auth.currentUser;
+    if (!user) {
+        console.error("Nincs bejelentkezve");
+        return;
+    }
+    remove(ref(database, "Rooms/" + lobbyIdStr + "/players/" + user.uid)).then(() => {
+        console.info("Sikeres törlés");
+        sessionStorage.removeItem("lobbyId");
+        sessionStorage.removeItem("isHost");
+        gotoLobby0Div();
+    }).catch((error) => {
+        console.error(error);
+    });
+}
+
 /************************************************************************************************************************************************
  * END OF FUNCTIONS
  * START OF CODE
@@ -390,4 +423,4 @@ onAuthStateChanged(auth, (user) => {
     } else {
         gotoLoginDiv();
     }
-})
+});
