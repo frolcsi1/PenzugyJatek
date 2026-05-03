@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getDatabase, ref, get, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+import { getDatabase, ref, get, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
 
 /************************************************************************************************************************************************
  * END OF IMPORTS
@@ -385,26 +385,57 @@ const logOut = () => {
 }
 
 const closeRoom = (lobbyIdStr) => {
-    remove(ref(database, "Rooms/" + lobbyIdStr)).then(() => {
-        console.info("Sikeres törlés");
-        sessionStorage.removeItem("lobbyId");
-        sessionStorage.removeItem("isHost");
-        gotoLobby0Div();
+    get(ref(database, "usedCodes")).then((snapshot) => {
+        let updatedCodes = "";
+        const usedCodes = snapshot.val();
+        updatedCodes = usedCodes.replace(lobbyIdStr + ";", "");
+        
+        let updates = {};
+        updates["usedCodes"] = updatedCodes;
+        updates[`Rooms/${lobbyIdStr}`] = null;
+        update(ref(database), updates).then(() => {
+            console.info("Sikeres törlés");
+
+            sessionStorage.removeItem("lobbyId");
+            sessionStorage.removeItem("isHost");
+            if (onValuePlayersStop) {
+                onValuePlayersStop();
+                onValuePlayersStop = null;
+            }
+            if (onValueGameSatusStop) {
+                onValueGameSatusStop();
+                onValueGameSatusStop = null;
+            }
+
+            gotoLobby0Div();
+        }).catch((error1) => {
+            console.error(error1);
+        });
     }).catch((error) => {
         console.error(error);
     });
 }
 
 const exitRoom = (lobbyIdStr) => {
-    user = auth.currentUser;
+    const user = auth.currentUser;
     if (!user) {
         console.error("Nincs bejelentkezve");
         return;
     }
     remove(ref(database, "Rooms/" + lobbyIdStr + "/players/" + user.uid)).then(() => {
-        console.info("Sikeres törlés");
+        console.info("Sikeres kilépés");
+
         sessionStorage.removeItem("lobbyId");
         sessionStorage.removeItem("isHost");
+        if (onValuePlayersStop) {
+            onValuePlayersStop();
+            onValuePlayersStop = null;
+        }
+        if (onValueGameSatusStop) {
+            onValueGameSatusStop();
+            onValueGameSatusStop = null;
+        }
+
         gotoLobby0Div();
     }).catch((error) => {
         console.error(error);
