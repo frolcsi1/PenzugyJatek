@@ -24,6 +24,7 @@ const database = getDatabase(app);
 
 let controller = new AbortController();
 let onValuePlayersStop = null;
+let onValueGameSatusStop = null;
 
 
 /************************************************************************************************************************************************
@@ -59,8 +60,8 @@ function gotoLobby0Div() {
     const isHost = sessionStorage.getItem("isHost");
     if (lobbyIdSession) {
         if (isHost == "true") {
-            get(ref(database, 'Rooms/' + lobbyIdSession)).then((snapshot1) => {
-                const roomData = snapshot1.val();
+            get(ref(database, 'Rooms/' + lobbyIdSession)).then((snapshot) => {
+                const roomData = snapshot.val();
                 
                 console.info("Visszalépve a szobába!")
                 gotoLobby1hostDiv(roomData);
@@ -69,8 +70,8 @@ function gotoLobby0Div() {
                 console.error(error);
             });
         } else {
-            get(ref(database, 'Rooms/' + lobbyIdSession)).then((snapshot1) => {
-                const roomData = snapshot1.val();
+            get(ref(database, 'Rooms/' + lobbyIdSession)).then((snapshot) => {
+                const roomData = snapshot.val();
                 console.log(roomData);
                     
                 console.info("Csatlakozva a szobához!");
@@ -105,12 +106,16 @@ function gotoLobby1hostDiv(roomData) {
         onValuePlayersStop();
         onValuePlayersStop = null;
     }
+    if (onValueGameSatusStop) {
+        onValueGameSatusStop();
+        onValueGameSatusStop = null;
+    }
     
     document.querySelector("#LobbyIdhosth2").textContent = "LobbyId: " + String(roomData.Code);
     const listElement = document.querySelector("#playersListhostul");
     const lobbyIdStr = sessionStorage.getItem("lobbyId");
-    onValuePlayersStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/players"), (snapshot2) => {
-        const players = snapshot2.val();
+    onValuePlayersStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/players"), (snapshot) => {
+        const players = snapshot.val();
         listElement.innerHTML = "";
         if (players) {
             const playersList = Object.values(players);
@@ -124,6 +129,14 @@ function gotoLobby1hostDiv(roomData) {
         console.error(error);
         gotoLobby0Div();
         return;
+    });
+
+    onValueGameSatusStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/status"), (snapshot1) => {
+        if (snapshot1.val() == 0) {
+            console.info("OK")
+        } else {
+            console.warn(snapshot1.val());
+        }
     });
     
     clearEventListeners();
@@ -141,7 +154,11 @@ function gotoLobby1playerDiv(roomData) {
         onValuePlayersStop();
         onValuePlayersStop = null;
     }
-    
+    if (onValueGameSatusStop) {
+        onValueGameSatusStop();
+        onValueGameSatusStop = null;
+    }
+
     document.querySelector("#LobbyIdplayerh2").textContent = "LobbyId: " + String(roomData.Code);
     const listElement = document.querySelector("#playersListplayerul");
     const lobbyIdStr = sessionStorage.getItem("lobbyId");
@@ -160,6 +177,14 @@ function gotoLobby1playerDiv(roomData) {
         console.error(error);
         gotoLobby0Div();
         return;
+    });
+
+    onValueGameSatusStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/status"), (snapshot1) => {
+        if (snapshot1.val() == 0) {
+            console.info("OK")
+        } else {
+            console.warn(snapshot1.val());
+        }
     });
     
     clearEventListeners();
