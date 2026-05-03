@@ -25,6 +25,9 @@ const database = getDatabase(app);
 let controller = new AbortController();
 let onValuePlayersStop = null;
 let onValueGameSatusStop = null;
+let errorTimeout = null;
+const errorDiv = document.querySelector("#errorDiv");
+let autoLogin = true;
 
 
 /************************************************************************************************************************************************
@@ -44,7 +47,37 @@ function clearEventListeners() {
     controller = new AbortController();
 }
 
-function gotoLoginDiv() {
+function gotoPrivacyPolicy() {
+    document.querySelector("#loginDiv").style.display = "none";
+    document.querySelector("#lobby0Div").style.display = "none";
+    document.querySelector("#lobby1hostDiv").style.display = "none";
+    document.querySelector("#lobby1playerDiv").style.display = "none";
+    document.querySelector("#privacyPolicyDiv").style.display = "block";
+    
+    clearEventListeners();
+    document.querySelector("#privacyPolicyContinue0").addEventListener('click', () => {
+        gotoLoginDiv(autoLogin);
+    }, { signal: controller.signal });
+    document.querySelector("#privacyPolicyContinue1").addEventListener('click', () => {
+        gotoLoginDiv(autoLogin);
+    }, { signal: controller.signal });
+}
+
+function gotoLoginDiv(first = false) {
+    if (first) {
+        autoLogin = false;
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.info("Sikeres bejelentkezés! UID: " + user.uid);
+                showError("Sikeres bejelentkezés!", 0);
+                gotoLobby0Div();
+            } else {
+                gotoLoginDiv();
+            }
+        });
+    }
+
+    document.querySelector("#privacyPolicyDiv").style.display = "none";
     document.querySelector("#lobby0Div").style.display = "none";
     document.querySelector("#lobby1hostDiv").style.display = "none";
     document.querySelector("#lobby1playerDiv").style.display = "none";
@@ -63,27 +96,31 @@ function gotoLobby0Div() {
             get(ref(database, 'Rooms/' + lobbyIdSession)).then((snapshot) => {
                 const roomData = snapshot.val();
                 
-                console.info("Visszalépve a szobába!")
+                console.info("Visszalépve a szobába!");
+                showError("Visszalépve a szobába!", 0);
                 gotoLobby1hostDiv(roomData);
                 return;
             }).catch((error) => {
                 console.error(error);
+                findError(error);
             });
         } else {
             get(ref(database, 'Rooms/' + lobbyIdSession)).then((snapshot) => {
                 const roomData = snapshot.val();
-                console.log(roomData);
                     
                 console.info("Csatlakozva a szobához!");
+                showError("Csatlakozva a szobához!", 0);
                 
                 gotoLobby1playerDiv(roomData);
                 return;
             }).catch((error) => {
                 console.error(error);
+                findError(error);
             });
         }
     }
 
+    document.querySelector("#privacyPolicyDiv").style.display = "none";
     document.querySelector("#loginDiv").style.display = "none";
     document.querySelector("#lobby1hostDiv").style.display = "none";
     document.querySelector("#lobby1playerDiv").style.display = "none";
@@ -97,6 +134,7 @@ function gotoLobby0Div() {
 }
 
 function gotoLobby1hostDiv(roomData) {
+    document.querySelector("#privacyPolicyDiv").style.display = "none";
     document.querySelector("#loginDiv").style.display = "none";
     document.querySelector("#lobby0Div").style.display = "none";
     document.querySelector("#lobby1playerDiv").style.display = "none";
@@ -127,6 +165,7 @@ function gotoLobby1hostDiv(roomData) {
         }
     }, (error) => {
         console.error(error);
+        findError(error);
         gotoLobby0Div();
         return;
     });
@@ -148,6 +187,7 @@ function gotoLobby1hostDiv(roomData) {
 }
 
 function gotoLobby1playerDiv(roomData) {
+    document.querySelector("#privacyPolicyDiv").style.display = "none";
     document.querySelector("#loginDiv").style.display = "none";
     document.querySelector("#lobby1hostDiv").style.display = "none";
     document.querySelector("#lobby0Div").style.display = "none";
@@ -178,6 +218,7 @@ function gotoLobby1playerDiv(roomData) {
         }
     }, (error) => {
         console.error(error);
+        findError(error);
         gotoLobby0Div();
         return;
     });
@@ -208,6 +249,7 @@ const signUp = () => {
     .then((userCredential) => {
         const user = userCredential.user;
         console.info("Sikeres regisztráció! UID:", user.uid);
+        showError("Sikeres regisztráció!", 0);
         gotoLobby0Div();
     })
     .catch((error => {
@@ -215,6 +257,8 @@ const signUp = () => {
         const errorMessage = error.message;
         console.error(errorCode);
         console.error(errorMessage);
+
+        findError(errorCode);
 
         document.querySelector("#signinBtn").addEventListener('click', signIn, { signal: controller.signal });
         document.querySelector("#signupBtn").addEventListener('click', signUp, { signal: controller.signal });
@@ -232,6 +276,7 @@ const signIn = () => {
     .then((userCredential) => {
         const user = userCredential.user;
         console.info("Sikeres belépés! UID:", user.uid);
+        showError("Sikeres belépés!", 0);
         gotoLobby0Div();
     })
     .catch((error) => {
@@ -239,6 +284,8 @@ const signIn = () => {
         const errorMessage = error.message;
         console.error(errorCode);
         console.error(errorMessage);
+
+        findError(errorCode);
         
         document.querySelector("#signinBtn").addEventListener('click', signIn, { signal: controller.signal });
         document.querySelector("#signupBtn").addEventListener('click', signUp, { signal: controller.signal });
@@ -251,6 +298,7 @@ const createLobby = () => {
     const user = auth.currentUser
     if (!user) {
         console.error("HIBA: Nincs bejelentkezve a felhasználó!");
+        showError("Nincs bejelentkezve!", 2);
         document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
         document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
         return;
@@ -260,7 +308,8 @@ const createLobby = () => {
     let lobbyPIN = Number(document.querySelector("#lobbyPINInput").value);
 
     if (!lobbyId || !lobbyPIN) {
-        console.error("HIBA: Tölts ki mendne szükséges mezőt!");
+        console.error("HIBA: Nincs kitöltve minden szükséges mezőt!");
+        showError("Nincs kitöltve minden szükséges mező!", 1);
         document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
         document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
         return;
@@ -273,7 +322,8 @@ const createLobby = () => {
         }
 
         if (usedCodes.includes(lobbyIdStr + ";")) {
-            console.error("Ez a lobbyId már létezik válassz másikat!");
+            console.error("Ez a lobbyId már létezik. Válasszon másikat!");
+            showError("Ez a lobbyId már létezik. Válasszon másikat!");
             document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
             document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
             return;
@@ -297,19 +347,22 @@ const createLobby = () => {
         get(ref(database, 'Rooms/' + lobbyIdStr)).then((snapshot1) => {
             const roomData = snapshot1.val();
             
-            console.info("A szoba létrehozva!")
+            console.info("A szoba létrehozva!");
+            showError("A szoba létrehozva!", 0);
             sessionStorage.setItem("lobbyId", lobbyIdStr);
             sessionStorage.setItem("isHost", "true");
 
             gotoLobby1hostDiv(roomData);
         }).catch((error1) => {
             console.error(error1);
+            findError(error1);
             
             document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
             document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
         });
     }).catch((error) => {
         console.error(error);
+        findError(error);
         
         document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
         document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
@@ -323,6 +376,7 @@ const joinLobby = () => {
     const user = auth.currentUser;
     if (!user) {
         console.error("HIBA: Nincs bejelentkezve a felhasználó!");
+        showError("Nincs bejelentkezve!", 2);
         document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
         document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
         return;
@@ -334,7 +388,8 @@ const joinLobby = () => {
     let nickname = document.querySelector("#lobbyNicknameInput").value;
 
     if (!lobbyId || !lobbyPIN || !nickname) {
-        console.error("HIBA: Tölts ki mendne szükséges mezőt!");
+        console.error("HIBA: Nincs kitöltve minden szükséges mező!");
+        showError("Nincs kitöltve minden szükséges mező!", 1);
         document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
         document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
         return;
@@ -343,6 +398,7 @@ const joinLobby = () => {
     get(ref(database, "usedCodes")).then((snapshot) => {
         if (!snapshot.exists() || !snapshot.val().includes(lobbyIdStr + ";")) {
             console.warn("Nem található szoba ezzel a kóddal");
+            showError("Nem található szoba ezzel a kóddal!", 2);
             document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
             document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
             return;
@@ -354,21 +410,23 @@ const joinLobby = () => {
 
         get(ref(database, 'Rooms/' + lobbyIdStr)).then((snapshot1) => {
             const roomData = snapshot1.val();
-            console.log(roomData);
-                
+            
             console.info("Csatlakozva a szobához!");
+            showError("Csatlakozva a szobához!", 0);
             sessionStorage.setItem("lobbyId", lobbyIdStr);
             sessionStorage.setItem("isHost", "false");
             
             gotoLobby1playerDiv(roomData);
         }).catch((error1) => {
             console.error(error1);
+            findError(error1);
             
             document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
             document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
         });
     }).catch((error) => {
         console.error(error);
+        findError(error);
         
         document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
         document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
@@ -378,9 +436,11 @@ const joinLobby = () => {
 const logOut = () => {
     signOut(auth).then(() => {
         console.info("Sikeres kijelentkezés!");
+        showError("Sikeres kijelentkezés!", 0);
         gotoLoginDiv();
     }).catch((error) => {
         console.error("Hiba a kijelentkezés során: " + error);
+        showError("Hiba a kijelentkezés során: " + error, 2);
     });
 }
 
@@ -395,6 +455,7 @@ const closeRoom = (lobbyIdStr) => {
         updates[`Rooms/${lobbyIdStr}`] = null;
         update(ref(database), updates).then(() => {
             console.info("Sikeres törlés");
+            showError("Sikeres törlés", 0);
 
             sessionStorage.removeItem("lobbyId");
             sessionStorage.removeItem("isHost");
@@ -410,9 +471,11 @@ const closeRoom = (lobbyIdStr) => {
             gotoLobby0Div();
         }).catch((error1) => {
             console.error(error1);
+            findError(error1);
         });
     }).catch((error) => {
         console.error(error);
+        findError(error);
     });
 }
 
@@ -420,10 +483,12 @@ const exitRoom = (lobbyIdStr) => {
     const user = auth.currentUser;
     if (!user) {
         console.error("Nincs bejelentkezve");
+        showError("Nincs bejelentkezve!");
         return;
     }
     remove(ref(database, "Rooms/" + lobbyIdStr + "/players/" + user.uid)).then(() => {
         console.info("Sikeres kilépés");
+        showError("Sikeres kilépés", 0);
 
         sessionStorage.removeItem("lobbyId");
         sessionStorage.removeItem("isHost");
@@ -439,19 +504,87 @@ const exitRoom = (lobbyIdStr) => {
         gotoLobby0Div();
     }).catch((error) => {
         console.error(error);
+        findError(error);
     });
+}
+
+const findError = (errMsg) => {
+    switch(errMsg) {
+        case 'auth/email-already-in-use':
+            showError("A megadott e-mail címmel már regisztráltak egy fiókot.", 2);
+            break;
+        case 'auth/invalid-email':
+            showError("Az e-mail cím formátuma nem megfelelő.", 2);
+            break;
+        case 'auth/missing-password':
+            showError("Adja meg a jelszavát!", 2);
+            break;
+        case 'auth/weak-password':
+            showError("A jelszó túl rövid vagy túl egyszerű.", 2);
+            break;
+        case 'auth/operation-not-allowed':
+            showError("Hiba történ! A probléma megoldásához forduljon a fejlesztőkhöz! Hibakód: 001.", 2);
+            break;
+        case 'auth/user-not-found':
+            showError("Nincs ilyen e-mail címmel regisztrált felhasználó.", 2);
+            break;
+        case 'auth/wrong-password':
+            showError("Az e-mail cím létezik, de a jelszó nem egyezik.", 2);
+            break;
+        case 'auth/invalid-credential':
+            showError("Hibás e-mail cím vagy jelszó.", 2);
+            break;
+        case 'auth/user-disabled':
+            showError("A felhasználó fiókját a rendszergazda letiltotta. A probléma megoldásához forduljon a fejlesztőkhöz! Hibakód: 011.", 2);
+            break;
+        case 'auth/too-many-requests':
+            showError("Túl sok sikertelen próbálkozás történt rövid időn belül.", 2);
+            break;
+        case "PERMISSION_DENIED":
+            showError("Nincs jogosultsága az adatok lekéréséhez!", 2);
+            break;
+        case "NETWORK_ERROR":
+            showError("Hálózati hiba! Ellenőrizze az internetkapcsolatát.", 2);
+            break;
+        default:
+            showError("Ismeretlen hiba történt.", 2);
+            break;
+    }
+}
+
+const showError = (message, type)/* type: 0: success; 1: warning; 2: error*/ => {
+    if (errorTimeout) {
+        clearTimeout(errorTimeout);
+    }
+
+    errorDiv.textContent = message;
+    errorDiv.style.display = "block";
+        errorDiv.className = "";
+    switch (type) {
+        case 0:
+            errorDiv.classList.add("success");
+            break;
+        case 1:
+            errorDiv.classList.add("warn");
+            break;
+        case 2:
+            errorDiv.classList.add("error");
+            break;
+    }
+
+    errorTimeout = setTimeout(() => {
+        errorDiv.style.display = "none";
+        errorDiv.textContent = "";
+        errorDiv.className = "";
+        errorTimeout = null;
+    }, 5000);
 }
 
 /************************************************************************************************************************************************
  * END OF FUNCTIONS
  * START OF CODE
 ************************************************************************************************************************************************/
-gotoLoginDiv();
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.info("SIkeres bejelentkezés! UID: " + user.uid);
-        gotoLobby0Div();
-    } else {
-        gotoLoginDiv();
-    }
-});
+
+
+
+gotoPrivacyPolicy();

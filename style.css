@@ -1,5 +1,9 @@
-#loginDiv {
+#privacyPolicyDiv {
     display: block;
+}
+
+#loginDiv {
+    display: none;
 }
 
 #lobby0Div {
@@ -12,4 +16,23 @@
 
 #lobby1playerDiv {
     display: none;
+}
+
+#errorDiv {
+    display: none;
+}
+
+.warn {
+    background-color: orange;
+    color: black;
+}
+
+.error {
+    background-color: red;
+    color: black;
+}
+
+.success {
+    background-color: lime;
+    color: black;
 }
