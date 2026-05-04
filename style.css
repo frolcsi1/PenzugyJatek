@@ -1,3 +1,12 @@
+:root {
+    --hu-display-inline-block: inline-block;
+    --hu-display-block: block;
+    --hu-display-list-item: list-item;
+    --en-display-inline-block: none;
+    --en-display-block: none;
+    --en-display-list-item: none;
+}
+
 #privacyPolicyDiv {
     display: block;
 }
@@ -35,4 +44,28 @@
 .success {
     background-color: lime;
     color: black;
+}
+
+.hu-inline-block {
+    display: var(--hu-display-inline-block);
+}
+
+.hu-block {
+    display: var(--hu-display-block);
+}
+
+.hu-list-item {
+    display: var(--hu-display-list-item);
+}
+
+.en-inline-block {
+    display: var(--en-display-inline-block);
+}
+
+.en-block {
+    display: var(--en-display-block);
+}
+
+.en-list-item {
+    display: var(--en-display-list-item);
 }

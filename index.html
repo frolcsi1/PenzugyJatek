@@ -8,38 +8,45 @@
 </head>
 <body>
     <div id="privacyPolicyDiv">
-        <h1>Adatkezelési Nyilatkozat</h1>
-        <p>Az oldal használatával és a regisztrációval kifejezetten elfogadja és tudomásul veszi az alábbiakat:</p>
-        <ul>
-            <li><b>Adattárolás:</b> Megadott adatait (e-mail cím, azonosító, játékbeli adatok) a szolgáltatás működtetése céljából a Google Firebase biztonságos felhőrendszerében tároljuk.</li>
-            <li><b>Harmadik fél:</b> Az adatait a Firebase szolgáltatáson kívül más harmadik félnek nem adjuk el, és nem tesszük hozzáférhetővé.</li>
-            <li><b>Felelősség:</b> A szolgáltatást saját felelősségére használja. Bár mindent megteszünk az adatok védelméért, az esetleges technikai hibákból vagy hálózati incidensekből eredő károkért felelősséget nem vállalunk.</li>
-        </ul>
-        <p>Az oldal további használata a fenti feltételek elfogadásának minősül.</p>
-        <input id="privacyPolicyContinue0" type="button" value="Folytatás">
-        <hr>
+        <input class="hu-inline-block" type="button" id="ChangeToEnglishBtn" value="Change to English">
+        <input class="en-inline-block" type="button" id="ChangeToHungarianBtn" value="Válts magyarra">
+        <h1 class="hu-block">Adatkezelési Nyilatkozat</h1>
+        <h1 class="en-block">Privacy Notice</h1>
+
+        <p class="hu-block">Az oldal használatával és a regisztrációval kifejezetten elfogadja és tudomásul veszi az alábbiakat:</p>
+        <p class="en-block">By using this website and registering an account, you expressly acknowledge and agree to the following:</p>
         
-        <h1>Privacy Notice</h1>
-        <p>By using this website and registering an account, you expressly acknowledge and agree to the following:</p>
         <ul>
-            <li><b>Data Storage:</b> Your provided data (e-mail address, unique identifier, game-related data) is stored and processed using Google Firebase, a secure cloud service provider, for the sole purpose of operating this service.</li>
-            <li><b>Third Parties:</b> We do not sell, trade, or otherwise transfer your personal data to any outside third parties (other than Google Firebase as our service provider).</li>
-            <li><b>Liability:</b> You use this service at your own risk. While we take every reasonable measure to ensure data security, we cannot be held liable for damages resulting from technical failures, network incidents, or unauthorized access.</li>
+            <li class="hu-list-item"><b>Adattárolás:</b> Megadott adatait (felhasználónév, ideiglenes játékbeli adatok) a szolgáltatás működtetése céljából a Google Firebase biztonságos felhőrendszerében tároljuk.</li>
+            <li class="hu-list-item"><b>Személyes adatok:</b> Az oldal semmilyen személyes adatot (pl. valós e-mail cím, név, telefonszám) nem gyűjt és nem tárol. A felhasználónevet a felhasználó szabad akaratából választja meg.</li>
+            <li class="hu-list-item"><b>Fiókkezelés korlátai:</b> Mivel nem gyűjtünk valós elérhetőséget, nem tudjuk értesíteni a felhasználót a fiók törléséről, valamint nem vagyunk képesek a jelszó visszaállítására vagy megváltoztatására. A jelszó megőrzése a felhasználó kizárólagos felelőssége.</li>
+            <li class="hu-list-item"><b>Adattörlés:</b> A rendszer tisztántartása érdekében a 3 hónapnál régebben használt, inaktív fiókok és a hozzájuk tartozó adatok előzetes értesítés nélkül véglegesen törlésre kerülhetnek. A játékmenet adatai a munkamenet végén törlődnek.</li>
+            <li class="hu-list-item"><b>Harmadik fél:</b> Az adatait a Firebase szolgáltatáson kívül más harmadik félnek nem adjuk el, és nem tesszük hozzáférhetővé.</li>
+            <li class="hu-list-item"><b>Felelősség:</b> A szolgáltatást saját felelősségére használja. Bár mindent megteszünk az adatok védelméért, az esetleges technikai hibákból vagy hálózati incidensekből eredő károkért felelősséget nem vállalunk.</li>
+
+            <li class="en-list-item"><b>Data Storage:</b> Your provided data (username, temporary game data) is stored and processed using Google Firebase, a secure cloud service provider, for the sole purpose of operating this service.</li>
+            <li class="en-list-item"><b>Personal Data:</b> This website does not collect or store any personal data (e.g., real email address, legal name, phone number). The username is chosen by the user of their own free will.</li>
+            <li class="en-list-item"><b>Account Limitations:</b> Since we do not collect valid contact information, we are unable to notify users about account deletions, and we are unable to reset or change lost passwords. Maintaining the password is the sole responsibility of the user.</li>
+            <li class="en-list-item"><b>Data Retention:</b> To maintain system efficiency, accounts inactive for more than 3 months, along with all associated data, may be permanently deleted without prior notice. Game session data is deleted once the session ends.</li>
+            <li class="en-list-item"><b>Third Parties:</b> We do not sell or make your data accessible to any third parties other than the Google Firebase service.</li>
+            <li class="en-list-item"><b>Liability:</b> You use this service at your own risk. While we take every reasonable measure to ensure data security, we cannot be held liable for damages resulting from technical failures or network incidents.</li>
         </ul>
-        <p>Continued use of this website constitutes your acceptance of these terms.</p>
-        <input id="privacyPolicyContinue1" type="button" value="Continue">
+        <p class="hu-block">Az oldal további használata a fenti feltételek elfogadásának minősül.</p>
+        <p class="en-block">Continued use of this website constitutes your acceptance of these terms.</p>
+        <input class="hu-inline-block" id="privacyPolicyContinue0" type="button" value="Folytatás">
+        <input class="en-inline-block" id="privacyPolicyContinue1" type="button" value="Continue">
     </div>
     <div id="loginDiv">
-        <input type="email" id="emailInput">
+        <input type="text" id="userNInput">
         <input type="password" id="pwdInput">
         <input type="button" id="signinBtn" value="Bejelentkezés">
         <input type="button" id="signupBtn" value="Regisztráció">
         <script type="module" src="./script.js"></script>
     </div>
     <div id="lobby0Div">
-        <h2 id="emailh2">Email: </h2>
-        <input type="number" name="lobbyId" id="lobbyIdInput" min="0" max="9999" placeholder="Szoba szám">
-        <input type="number" name="lobbyPIN" id="lobbyPINInput" min="0" max="9999" placeholder="Szoba kód">
+        <h2 id="userNh2">Felhasználónév: </h2>
+        <input type="number" name="lobbyId" id="lobbyIdInput" min="0" max="9999" placeholder="Szobaszám">
+        <input type="number" name="lobbyPIN" id="lobbyPINInput" min="0" max="9999" placeholder="Szobakód">
         <input type="text" name="lobbyNickname" id="lobbyNicknameInput" placeholder="Felhasználónév">
         <input type="button" id="createBtn" value="Létrehozás">
         <input type="button" id="joinBtn" value="Csatlakozás">
@@ -47,7 +54,7 @@
     </div>
     <div id="lobby1hostDiv">
         <h1>Üdvözöllek a szobában!</h1>
-        <h2 id="LobbyIdhosth2">LobbyId: </h2>
+        <h2 id="LobbyIdhosth2">Szobaszám: </h2>
         <h3>Játékosok:</h3>
         <ul id="playersListhostul"></ul>
         <input type="button" value="Indítás">
@@ -55,7 +62,7 @@
     </div>
     <div id="lobby1playerDiv">
         <h1>Üdvözöllek a szobában!</h1>
-        <h2 id="LobbyIdplayerh2">LobbyId: </h2>
+        <h2 id="LobbyIdplayerh2">Szobaszám: </h2>
         <h3>Játékosok:</h3>
         <ul id="playersListplayerul"></ul>
         <input id="exitRoomBtn" type="button" value="Kilépés a szobából">

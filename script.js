@@ -28,7 +28,7 @@ let onValueGameSatusStop = null;
 let errorTimeout = null;
 const errorDiv = document.querySelector("#errorDiv");
 let autoLogin = true;
-const emailDomain = "@PenzugyJatek.NotExists"
+const emailDomain = "@penzugyjatek.notexists"
 
 
 /************************************************************************************************************************************************
@@ -56,6 +56,23 @@ function gotoPrivacyPolicy() {
     document.querySelector("#privacyPolicyDiv").style.display = "block";
     
     clearEventListeners();
+    document.querySelector("#ChangeToEnglishBtn").addEventListener('click', () => {
+        document.documentElement.style.setProperty('--hu-display-inline-block', 'none');
+        document.documentElement.style.setProperty('--hu-display-block', 'none');
+        document.documentElement.style.setProperty('--hu-display-list-item', 'none');
+        document.documentElement.style.setProperty('--en-display-inline-block', 'inline-block');
+        document.documentElement.style.setProperty('--en-display-block', 'block');
+        document.documentElement.style.setProperty('--en-display-list-item', 'list-item');
+    }, { signal: controller.signal });
+    document.querySelector("#ChangeToHungarianBtn").addEventListener('click', () => {
+        document.documentElement.style.setProperty('--en-display-inline-block', 'none');
+        document.documentElement.style.setProperty('--en-display-block', 'none');
+        document.documentElement.style.setProperty('--en-display-list-item', 'none');
+        document.documentElement.style.setProperty('--hu-display-inline-block', 'inline-block');
+        document.documentElement.style.setProperty('--hu-display-block', 'block');
+        document.documentElement.style.setProperty('--hu-display-list-item', 'list-item');
+    }, { signal: controller.signal });
+
     document.querySelector("#privacyPolicyContinue0").addEventListener('click', () => {
         gotoLoginDiv(autoLogin);
     }, { signal: controller.signal });
@@ -150,7 +167,7 @@ function gotoLobby1hostDiv(roomData) {
         onValueGameSatusStop = null;
     }
     
-    document.querySelector("#LobbyIdhosth2").textContent = "LobbyId: " + String(roomData.Code);
+    document.querySelector("#LobbyIdhosth2").textContent = "Szobaszám: " + String(roomData.Code);
     const listElement = document.querySelector("#playersListhostul");
     const lobbyIdStr = sessionStorage.getItem("lobbyId");
     onValuePlayersStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/players"), (snapshot) => {
@@ -203,7 +220,7 @@ function gotoLobby1playerDiv(roomData) {
         onValueGameSatusStop = null;
     }
 
-    document.querySelector("#LobbyIdplayerh2").textContent = "LobbyId: " + String(roomData.Code);
+    document.querySelector("#LobbyIdplayerh2").textContent = "Szobaszám: " + String(roomData.Code);
     const listElement = document.querySelector("#playersListplayerul");
     const lobbyIdStr = sessionStorage.getItem("lobbyId");
     onValuePlayersStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/players"), (snapshot2) => {
@@ -243,7 +260,7 @@ function gotoLobby1playerDiv(roomData) {
 const signUp = () => {
     clearEventListeners();
 
-    const userN = document.querySelector("#emailInput").value;
+    const userN = document.querySelector("#userNInput").value;
     const email = userN + emailDomain;
     const pwd = document.querySelector("#pwdInput").value;
 
@@ -271,7 +288,7 @@ const signUp = () => {
 const signIn = () => {
     clearEventListeners();
 
-    const userN = document.querySelector("#emailInput").value;
+    const userN = document.querySelector("#userNInput").value;
     const email = userN + emailDomain;
     const pwd = document.querySelector("#pwdInput").value;
 
@@ -456,20 +473,22 @@ const closeRoom = (lobbyIdStr) => {
         let updates = {};
         updates["usedCodes"] = updatedCodes;
         updates[`Rooms/${lobbyIdStr}`] = null;
+
+        if (onValuePlayersStop) {
+            onValuePlayersStop();
+            onValuePlayersStop = null;
+        }
+        if (onValueGameSatusStop) {
+            onValueGameSatusStop();
+            onValueGameSatusStop = null;
+        }
+
         update(ref(database), updates).then(() => {
             console.info("Sikeres törlés");
             showError("Sikeres törlés", 0);
 
             sessionStorage.removeItem("lobbyId");
             sessionStorage.removeItem("isHost");
-            if (onValuePlayersStop) {
-                onValuePlayersStop();
-                onValuePlayersStop = null;
-            }
-            if (onValueGameSatusStop) {
-                onValueGameSatusStop();
-                onValueGameSatusStop = null;
-            }
 
             gotoLobby0Div();
         }).catch((error1) => {
@@ -489,20 +508,20 @@ const exitRoom = (lobbyIdStr) => {
         showError("Nincs bejelentkezve!");
         return;
     }
+    if (onValuePlayersStop) {
+        onValuePlayersStop();
+        onValuePlayersStop = null;
+    }
+    if (onValueGameSatusStop) {
+        onValueGameSatusStop();
+        onValueGameSatusStop = null;
+    }
     remove(ref(database, "Rooms/" + lobbyIdStr + "/players/" + user.uid)).then(() => {
         console.info("Sikeres kilépés");
         showError("Sikeres kilépés", 0);
 
         sessionStorage.removeItem("lobbyId");
         sessionStorage.removeItem("isHost");
-        if (onValuePlayersStop) {
-            onValuePlayersStop();
-            onValuePlayersStop = null;
-        }
-        if (onValueGameSatusStop) {
-            onValueGameSatusStop();
-            onValueGameSatusStop = null;
-        }
 
         gotoLobby0Div();
     }).catch((error) => {
