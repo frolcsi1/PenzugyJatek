@@ -2,10 +2,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref, get, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
 
+
 /************************************************************************************************************************************************
  * END OF IMPORTS
  * START OF INITIALIZATION
 ************************************************************************************************************************************************/
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBeiz5cjFl_wCvGqZjT5HDzTod69bbyM6Q",
@@ -36,12 +38,6 @@ const emailDomain = "@penzugyjatek.notexists"
  * START OF FUNCTIONS
 ************************************************************************************************************************************************/
 
-
-/*
-window.addEventListener('beforeunload', (event) => {
-    event.preventDefault();
-    event.returnValue = '';
-});*/
 
 function clearEventListeners() {
     controller.abort();
@@ -602,11 +598,11 @@ const showError = (message, type)/* type: 0: success; 1: warning; 2: error*/ => 
     }, 5000);
 }
 
+
 /************************************************************************************************************************************************
  * END OF FUNCTIONS
  * START OF CODE
 ************************************************************************************************************************************************/
-
 
 
 gotoPrivacyPolicy();
