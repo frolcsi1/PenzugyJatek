@@ -28,6 +28,7 @@ let onValueGameSatusStop = null;
 let errorTimeout = null;
 const errorDiv = document.querySelector("#errorDiv");
 let autoLogin = true;
+const emailDomain = "@PenzugyJatek.NotExists"
 
 
 /************************************************************************************************************************************************
@@ -125,7 +126,7 @@ function gotoLobby0Div() {
     document.querySelector("#lobby1hostDiv").style.display = "none";
     document.querySelector("#lobby1playerDiv").style.display = "none";
     document.querySelector("#lobby0Div").style.display = "block";
-    document.querySelector("#emailh2").textContent = "Email: " + auth.currentUser.email;
+    document.querySelector("#userNh2").textContent = "Felhasználónév: " + (auth.currentUser.email.replace(emailDomain, ""));
     
     clearEventListeners();
     document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
@@ -242,7 +243,8 @@ function gotoLobby1playerDiv(roomData) {
 const signUp = () => {
     clearEventListeners();
 
-    const email = document.querySelector("#emailInput").value;
+    const userN = document.querySelector("#emailInput").value;
+    const email = userN + emailDomain;
     const pwd = document.querySelector("#pwdInput").value;
 
     createUserWithEmailAndPassword(auth, email, pwd)
@@ -269,7 +271,8 @@ const signUp = () => {
 const signIn = () => {
     clearEventListeners();
 
-    const email = document.querySelector("#emailInput").value;
+    const userN = document.querySelector("#emailInput").value;
+    const email = userN + emailDomain;
     const pwd = document.querySelector("#pwdInput").value;
 
     signInWithEmailAndPassword(auth, email, pwd)
@@ -511,10 +514,10 @@ const exitRoom = (lobbyIdStr) => {
 const findError = (errMsg) => {
     switch(errMsg) {
         case 'auth/email-already-in-use':
-            showError("A megadott e-mail címmel már regisztráltak egy fiókot.", 2);
+            showError("A megadott felhasználónévvel már regisztráltak egy fiókot.", 2);
             break;
         case 'auth/invalid-email':
-            showError("Az e-mail cím formátuma nem megfelelő.", 2);
+            showError("Az felhasználónév nem megengedett karaktereket tartalmaz (betűk, számok, _ és betűvel kell kezdődnie).", 2);
             break;
         case 'auth/missing-password':
             showError("Adja meg a jelszavát!", 2);
@@ -526,13 +529,13 @@ const findError = (errMsg) => {
             showError("Hiba történ! A probléma megoldásához forduljon a fejlesztőkhöz! Hibakód: 001.", 2);
             break;
         case 'auth/user-not-found':
-            showError("Nincs ilyen e-mail címmel regisztrált felhasználó.", 2);
+            showError("Nincs ilyen felhasználónévvel regisztrált felhasználó.", 2);
             break;
         case 'auth/wrong-password':
-            showError("Az e-mail cím létezik, de a jelszó nem egyezik.", 2);
+            showError("Hibás jelszó.", 2);
             break;
         case 'auth/invalid-credential':
-            showError("Hibás e-mail cím vagy jelszó.", 2);
+            showError("Hibás felhasználónév vagy jelszó.", 2);
             break;
         case 'auth/user-disabled':
             showError("A felhasználó fiókját a rendszergazda letiltotta. A probléma megoldásához forduljon a fejlesztőkhöz! Hibakód: 011.", 2);
