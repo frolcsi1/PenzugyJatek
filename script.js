@@ -31,6 +31,7 @@ let errorTimeout = null;
 const errorDiv = document.querySelector("#errorDiv");
 let autoLogin = true;
 const emailDomain = "@penzugyjatek.notexists"
+let newPlayersAllowed = true
 
 
 /************************************************************************************************************************************************
@@ -171,6 +172,13 @@ function gotoLobby1hostDiv(roomData) {
         listElement.innerHTML = "";
         if (players) {
             const playersList = Object.values(players);
+            if (playersList.length >= 10) {
+                set(ref(database, 'Rooms/' + lobbyIdStr + "/newPlayerAllowed"), false);
+                newPlayersAllowed = false;
+            } else if (!newPlayersAllowed) {
+                set(ref(database, 'Rooms/' + lobbyIdStr + "/newPlayerAllowed"), true);
+                newPlayersAllowed = true;
+            }
             playersList.forEach((player) => {
                 const li = document.createElement('li');
                 li.textContent = player.nickname;
@@ -193,8 +201,7 @@ function gotoLobby1hostDiv(roomData) {
     });
     
     clearEventListeners();
-    document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
-    document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
+    document.querySelector("#startGameBtn").addEventListener('click', startGame, { signal: controller.signal });
     document.querySelector("#closeRoomBtn").addEventListener('click', () => {
         closeRoom(lobbyIdStr);
     }, { signal: controller.signal });
@@ -246,8 +253,7 @@ function gotoLobby1playerDiv(roomData) {
     });
     
     clearEventListeners();
-    document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
-    document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
+    document.querySelector("#startGameBtn").addEventListener('click', startGame, { signal: controller.signal });
     document.querySelector("#exitRoomBtn").addEventListener('click', () => {
         exitRoom(lobbyIdStr);
     }, { signal: controller.signal });
@@ -357,7 +363,8 @@ const createLobby = () => {
             questionId: -1,
             score: {
             },
-            status: 0
+            status: 0,
+            newPlayerAllowed: true,
         });
 
         get(ref(database, 'Rooms/' + lobbyIdStr)).then((snapshot1) => {
@@ -561,7 +568,13 @@ const findError = (errMsg) => {
         case "PERMISSION_DENIED":
             showError("Nincs jogosultsága az adatok lekéréséhez!", 2);
             break;
+        case "Permission denied":
+            showError("Nincs jogosultsága az adatok lekéréséhez!", 2);
+            break;
         case "NETWORK_ERROR":
+            showError("Hálózati hiba! Ellenőrizze az internetkapcsolatát.", 2);
+            break;
+        case "Network error":
             showError("Hálózati hiba! Ellenőrizze az internetkapcsolatát.", 2);
             break;
         default:
