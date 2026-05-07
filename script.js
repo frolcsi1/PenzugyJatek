@@ -253,7 +253,6 @@ function gotoLobby1playerDiv(roomData) {
     });
     
     clearEventListeners();
-    document.querySelector("#startGameBtn").addEventListener('click', startGame, { signal: controller.signal });
     document.querySelector("#exitRoomBtn").addEventListener('click', () => {
         exitRoom(lobbyIdStr);
     }, { signal: controller.signal });
@@ -609,6 +608,10 @@ const showError = (message, type)/* type: 0: success; 1: warning; 2: error*/ => 
         errorDiv.className = "";
         errorTimeout = null;
     }, 5000);
+}
+
+const startGame = () => {
+    console.log("start");
 }
 
 
