@@ -27,11 +27,13 @@ const database = getDatabase(app);
 let controller = new AbortController();
 let onValuePlayersStop = null;
 let onValueGameSatusStop = null;
+let onValueBidListening = null;
 let errorTimeout = null;
 const errorDiv = document.querySelector("#errorDiv");
 let autoLogin = true;
 const emailDomain = "@penzugyjatek.notexists"
 let newPlayersAllowed = true
+let letters = [];
 
 
 /************************************************************************************************************************************************
@@ -46,11 +48,13 @@ function clearEventListeners() {
 }
 
 function hideAll() {
+    document.querySelector("#privacyPolicyDiv").classList.add("hidden");
     document.querySelector("#loginDiv").classList.add("hidden");
     document.querySelector("#lobby0Div").classList.add("hidden");
     document.querySelector("#lobby1hostDiv").classList.add("hidden");
     document.querySelector("#lobby1playerDiv").classList.add("hidden");
-    document.querySelector("#privacyPolicyDiv").classList.add("hidden");
+    document.querySelector("#GameQuestionDiv").classList.add("hidden");
+    document.querySelector("#GameAuctionDiv").classList.add("hidden");
 }
 
 function gotoPrivacyPolicy() {
@@ -197,7 +201,9 @@ function gotoLobby1hostDiv(roomData) {
     });
     
     clearEventListeners();
-    document.querySelector("#startGameBtn").addEventListener('click', startGame, { signal: controller.signal });
+    document.querySelector("#startGameBtn").addEventListener('click', () => {
+        startGame(lobbyIdStr);
+    }, { signal: controller.signal });
     document.querySelector("#closeRoomBtn").addEventListener('click', () => {
         closeRoom(lobbyIdStr);
     }, { signal: controller.signal });
@@ -244,9 +250,77 @@ function gotoLobby1playerDiv(roomData) {
     onValueGameSatusStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/status"), (snapshot1) => {
         if (snapshot1.val() == 0) {
             console.info("OK")
+        } else if (snapshot1.val()[0] == "1") {
+            console.warn(snapshot1.val());
+        } else if (snapshot1.val()[0] == "2") {
+            gotoGameAuctionDiv();
         } else {
             console.warn(snapshot1.val());
         }
+    });
+    
+    clearEventListeners();
+    document.querySelector("#exitRoomBtn").addEventListener('click', () => {
+        exitRoom(lobbyIdStr);
+    }, { signal: controller.signal });
+}
+
+function gotoGameAuctionDiv() {
+    hideAll();
+    document.querySelector("#GameAuctionDiv").classList.remove("hidden");
+    
+    if (onValuePlayersStop) {
+        onValuePlayersStop();
+        onValuePlayersStop = null;
+    }
+    if (onValueGameSatusStop) {
+        onValueGameSatusStop();
+        onValueGameSatusStop = null;
+    }
+    if (onValueBidListening) {
+        onValueBidListening();
+        onValueBidListening = null;
+    }
+
+    let offers = [null, null, null, null, null, null];
+
+    onValueBidListening = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/bid"), (snapshot) => {
+        const dbChars = snapshot.val() || {};
+
+        for (let i = 0; i < offers.length; i++) {
+            const char = offers[i];
+
+            if (char && !dbChars[char]) {
+                offers[i] = null;
+            }
+        }
+
+        for (const [charKey, data] of Object.entries(dbChars)) {
+            const alreadyShowed = offers.includes(charKey);
+
+            if (!alreadyShowed) {
+                const freeIndex = offers.indexOf(null);
+
+                if (freeIndex !== -1) {
+                    offers[freeIndex] = charKey;
+                }
+            }
+        }
+
+        offers.forEach((char, i) => {
+            if (char) {
+                document.querySelector(`#letter${i}h1`).innerHTML = `${char} (${dbChars[char].bidAmount} pont)`;
+                document.querySelector(`#bid${i}Input`).value = dbChars[char].bidAmount+1;
+                document.querySelector(`#bid${i}Btn`).addEventListener('onclick', () => {
+                    console.log("Licitálás");
+                    //TODO: DB-nek új ajánlat küldése, ott beállítani, hogy tudja módosítani
+                }, { signal: controller.signal });
+            } else {
+                document.querySelector(`#letter${i}h1`).innerHTML = '-';
+                document.querySelector(`#bid${i}Input`).value = 0;
+                document.querySelector(`#bid${i}Btn`).onclick = null;
+            }
+        })
     });
     
     clearEventListeners();
@@ -595,8 +669,71 @@ const showError = (message, type)/* type: 0: success; 1: warning; 2: error*/ => 
     }, 5000);
 }
 
-const startGame = () => {
-    console.log("start");
+const startGame = (lobbyIdStr) => {
+    set(ref(database, "Rooms/" + lobbyIdStr + "/status"), "2");
+    auction(lobbyIdStr);
+}
+
+function auction(lobbyIdStr) {
+    console.info("OK3")
+    if (onValuePlayersStop) {
+        onValuePlayersStop();
+        onValuePlayersStop = null;
+    }
+    if (onValueGameSatusStop) {
+        onValueGameSatusStop();
+        onValueGameSatusStop = null;
+    }
+
+    let abc = ["A", "Á", "B", "C", "Cs", "D", "Dz", "Dzs", "E", "É", "F", "G", "Gy", "H", "I", "Í", "J", "K", "L", "Ly","M", "N", "Ny", "O", "Ó", "Ö", "Ő", "P", "Q", "R", "S", "Sz", "T", "Ty", "U", "Ú", "Ü", "Ű", "V", "W", "X", "Y", "Z", "Zs"];
+
+    for (let i = abc.length-1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i+1));
+
+        [abc[i], abc[j]] = [abc[j], abc[i]];
+    }
+
+    const dbRef = ref(database, `Rooms/${lobbyIdStr}/bid`);
+    let lastCharSentTime = 0;
+
+    setInterval(async () => {
+        console.info("OK5")
+        const snapshot = await get(dbRef);
+        let actualOffers = snapshot.val() || {};
+        const now = Date.now();
+        let changed = false;
+
+        for (const [key, data] of Object.entries(actualOffers)) {
+            if (now >= data.expire) {
+                if (data.uid !== "") {
+                    showError(`A(z) ${data.char} betűt megnyerte: ${data.uid}`);
+                    //TODO: Üzenet a db-nek, hogy data.uid megkapta a betűt!!!
+                }
+                delete actualOffers[key];
+                changed = true;
+            }
+        }
+
+        const actualNumberOfOffers = Object.keys(actualOffers).length;
+
+        if (actualNumberOfOffers < 5 && abc.length > 0 && (now-lastCharSentTime) >= 1000) {
+            const newChar = abc.shift();
+
+            actualOffers[newChar] = {
+                "char": newChar,
+                "bidAmount": 0,
+                "uid": "",
+                "expire": now + 5000
+            };
+
+            lastCharSentTime = now;
+            changed = true;
+        }
+
+        if (changed) {
+            await update(ref(database, `Rooms/${lobbyIdStr}/`), { 'bid': actualOffers });
+        }
+    }, 200);
 }
 
 

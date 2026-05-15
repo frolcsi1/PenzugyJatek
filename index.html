@@ -66,36 +66,41 @@
         <h2 id="LobbyIdplayerh2">Szobaszám: </h2>
         <h3>Játékosok:</h3>
         <ul id="playersListplayerul"></ul>
-        <input id="exitRoomBtn" type="button" value="Kilépés a szobából">
     </div>
+    <input id="exitRoomBtn" type="button" value="Kilépés a szobából">
 
-    <div id="GameQuestionDiv">
-
+    <div id="GameQuestionDiv" class="hidden">
+        <h3>Válaszd ki, hogy melyik fogalom tartoik a következő definícióhoz:</h3>
+        <h2>Definíció</h2>
+        <input type="button" id="Option0" value="O0">
+        <input type="button" id="Option1" value="O1">
+        <input type="button" id="Option2" value="O2">
+        <input type="button" id="Option3" value="O3">
     </div>
     <div id="GameAuctionDiv" class="hidden">
         <div id="letter0Div">
-            <h1 id="letter0h1">A</h1>
+            <h1 id="letter0h1">0</h1>
             <input type="number" name="bid0" id="bid0Input" min="1">
             <input type="button" id="bid0Btn" value="Licitálás">
         </div>
         <div id="letter1Div">
-            <h1 id="letter1h1">A</h1>
-            <input type="number" name="bid1" id="bid0Input" min="1">
+            <h1 id="letter1h1">0</h1>
+            <input type="number" name="bid1" id="bid1Input" min="1">
             <input type="button" id="bid1Btn" value="Licitálás">
         </div>
         <div id="letter2Div">
-            <h1 id="letter2h1">A</h1>
-            <input type="number" name="bid2" id="bid0Input" min="1">
+            <h1 id="letter2h1">0</h1>
+            <input type="number" name="bid2" id="bid2Input" min="1">
             <input type="button" id="bid2Btn" value="Licitálás">
         </div>
         <div id="letter3Div">
-            <h1 id="letter3h1">A</h1>
-            <input type="number" name="bid3" id="bid0Input" min="1">
+            <h1 id="letter3h1">0</h1>
+            <input type="number" name="bid3" id="bid3Input" min="1">
             <input type="button" id="bid3Btn" value="Licitálás">
         </div>
         <div id="letter4Div">
             <h1 id="letter4h1">A</h1>
-            <input type="number" name="bid4" id="bid0Input" min="1">
+            <input type="number" name="bid4" id="bid4Input" min="1">
             <input type="button" id="bid4Btn" value="Licitálás">
         </div>
     </div>
