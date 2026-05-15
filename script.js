@@ -45,29 +45,35 @@ function clearEventListeners() {
     controller = new AbortController();
 }
 
+function hideAll() {
+    document.querySelector("#loginDiv").classList.add("hidden");
+    document.querySelector("#lobby0Div").classList.add("hidden");
+    document.querySelector("#lobby1hostDiv").classList.add("hidden");
+    document.querySelector("#lobby1playerDiv").classList.add("hidden");
+    document.querySelector("#privacyPolicyDiv").classList.add("hidden");
+}
+
 function gotoPrivacyPolicy() {
-    document.querySelector("#loginDiv").style.display = "none";
-    document.querySelector("#lobby0Div").style.display = "none";
-    document.querySelector("#lobby1hostDiv").style.display = "none";
-    document.querySelector("#lobby1playerDiv").style.display = "none";
-    document.querySelector("#privacyPolicyDiv").style.display = "block";
+    hideAll();
+    document.querySelector("#privacyPolicyDiv").classList.remove("hidden");
+
     
     clearEventListeners();
     document.querySelector("#ChangeToEnglishBtn").addEventListener('click', () => {
-        document.documentElement.style.setProperty('--hu-display-inline-block', 'none');
-        document.documentElement.style.setProperty('--hu-display-block', 'none');
-        document.documentElement.style.setProperty('--hu-display-list-item', 'none');
-        document.documentElement.style.setProperty('--en-display-inline-block', 'inline-block');
-        document.documentElement.style.setProperty('--en-display-block', 'block');
-        document.documentElement.style.setProperty('--en-display-list-item', 'list-item');
+        document.querySelectorAll(".hu").forEach(element => {
+            element.classList.add("hidden");
+        });
+        document.querySelectorAll(".en").forEach(element => {
+            element.classList.remove("hidden");
+        });
     }, { signal: controller.signal });
     document.querySelector("#ChangeToHungarianBtn").addEventListener('click', () => {
-        document.documentElement.style.setProperty('--en-display-inline-block', 'none');
-        document.documentElement.style.setProperty('--en-display-block', 'none');
-        document.documentElement.style.setProperty('--en-display-list-item', 'none');
-        document.documentElement.style.setProperty('--hu-display-inline-block', 'inline-block');
-        document.documentElement.style.setProperty('--hu-display-block', 'block');
-        document.documentElement.style.setProperty('--hu-display-list-item', 'list-item');
+        document.querySelectorAll(".en").forEach(element => {
+            element.classList.add("hidden");
+        });
+        document.querySelectorAll(".hu").forEach(element => {
+            element.classList.remove("hidden");
+        });
     }, { signal: controller.signal });
 
     document.querySelector("#privacyPolicyContinue0").addEventListener('click', () => {
@@ -91,12 +97,8 @@ function gotoLoginDiv(first = false) {
             }
         });
     }
-
-    document.querySelector("#privacyPolicyDiv").style.display = "none";
-    document.querySelector("#lobby0Div").style.display = "none";
-    document.querySelector("#lobby1hostDiv").style.display = "none";
-    document.querySelector("#lobby1playerDiv").style.display = "none";
-    document.querySelector("#loginDiv").style.display = "block";
+    hideAll();
+    document.querySelector("#loginDiv").classList.remove("hidden");
     
     clearEventListeners();
     document.querySelector("#signinBtn").addEventListener('click', signIn, { signal: controller.signal });
@@ -135,11 +137,8 @@ function gotoLobby0Div() {
         }
     }
 
-    document.querySelector("#privacyPolicyDiv").style.display = "none";
-    document.querySelector("#loginDiv").style.display = "none";
-    document.querySelector("#lobby1hostDiv").style.display = "none";
-    document.querySelector("#lobby1playerDiv").style.display = "none";
-    document.querySelector("#lobby0Div").style.display = "block";
+    hideAll();
+    document.querySelector("#lobby0Div").classList.remove("hidden");
     document.querySelector("#userNh2").textContent = "Felhasználónév: " + (auth.currentUser.email.replace(emailDomain, ""));
     
     clearEventListeners();
@@ -149,11 +148,8 @@ function gotoLobby0Div() {
 }
 
 function gotoLobby1hostDiv(roomData) {
-    document.querySelector("#privacyPolicyDiv").style.display = "none";
-    document.querySelector("#loginDiv").style.display = "none";
-    document.querySelector("#lobby0Div").style.display = "none";
-    document.querySelector("#lobby1playerDiv").style.display = "none";
-    document.querySelector("#lobby1hostDiv").style.display = "block";
+    hideAll();
+    document.querySelector("#lobby1hostDiv").classList.remove("hidden");
 
     if (onValuePlayersStop) {
         onValuePlayersStop();
@@ -212,11 +208,8 @@ function gotoLobby1hostDiv(roomData) {
 }
 
 function gotoLobby1playerDiv(roomData) {
-    document.querySelector("#privacyPolicyDiv").style.display = "none";
-    document.querySelector("#loginDiv").style.display = "none";
-    document.querySelector("#lobby1hostDiv").style.display = "none";
-    document.querySelector("#lobby0Div").style.display = "none";
-    document.querySelector("#lobby1playerDiv").style.display = "block";
+    hideAll();
+    document.querySelector("#lobby1playerDiv").classList.remove("hidden");
     
     if (onValuePlayersStop) {
         onValuePlayersStop();
