@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getDatabase, ref, get, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+import { getDatabase, ref, get, set, onValue, remove, update, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
 
 
 /************************************************************************************************************************************************
@@ -205,6 +205,10 @@ function gotoLobby1hostDiv(roomData) {
     document.querySelector("#closeRoomBtn").addEventListener('click', () => {
         closeRoom(lobbyIdStr);
     }, { signal: controller.signal });
+    window.addEventListener('beforeunload', (event) => {
+        event.preventDefault();
+        event.returnValue = '';
+    }, { signal: controller.signal });
 }
 
 function gotoLobby1playerDiv(roomData) {
@@ -336,13 +340,9 @@ const createLobby = () => {
         return;
     }
 
-    get(ref(database, 'usedCodes')).then((snapshot) => {
-        let usedCodes = "";
-        if (snapshot.exists()) {
-            usedCodes = snapshot.val();
-        }
-
-        if (usedCodes.includes(lobbyIdStr + ";")) {
+    get(ref(database, 'usedCodes/' + lobbyIdStr)).then((snapshot) => {
+        const used = snapshot.val();
+        if (used) {
             console.error("Ez a lobbyId már létezik. Válasszon másikat!");
             showError("Ez a lobbyId már létezik. Válasszon másikat!");
             document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
@@ -350,7 +350,7 @@ const createLobby = () => {
             return;
         }
         
-        set(ref(database, 'usedCodes'), usedCodes + lobbyIdStr + ";");
+        set(ref(database, 'usedCodes/' + lobbyIdStr), true);
 
         set(ref(database, 'Rooms/' + lobbyIdStr), {
             Code: lobbyId,
@@ -417,8 +417,9 @@ const joinLobby = () => {
         return;
     }
 
-    get(ref(database, "usedCodes")).then((snapshot) => {
-        if (!snapshot.exists() || !snapshot.val().includes(lobbyIdStr + ";")) {
+    get(ref(database, "usedCodes/" + lobbyIdStr)).then((snapshot) => {
+        const isExists = snapshot.val()
+        if (!isExists) {
             console.warn("Nem található szoba ezzel a kóddal");
             showError("Nem található szoba ezzel a kóddal!", 2);
             document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
@@ -467,39 +468,30 @@ const logOut = () => {
 }
 
 const closeRoom = (lobbyIdStr) => {
-    get(ref(database, "usedCodes")).then((snapshot) => {
-        let updatedCodes = "";
-        const usedCodes = snapshot.val();
-        updatedCodes = usedCodes.replace(lobbyIdStr + ";", "");
-        
-        let updates = {};
-        updates["usedCodes"] = updatedCodes;
-        updates[`Rooms/${lobbyIdStr}`] = null;
+    let updates = {};
+    updates[`usedCodes/${lobbyIdStr}`] = false;
+    updates[`Rooms/${lobbyIdStr}`] = null;
 
-        if (onValuePlayersStop) {
-            onValuePlayersStop();
-            onValuePlayersStop = null;
-        }
-        if (onValueGameSatusStop) {
-            onValueGameSatusStop();
-            onValueGameSatusStop = null;
-        }
+    if (onValuePlayersStop) {
+        onValuePlayersStop();
+        onValuePlayersStop = null;
+    }
+    if (onValueGameSatusStop) {
+        onValueGameSatusStop();
+        onValueGameSatusStop = null;
+    }
 
-        update(ref(database), updates).then(() => {
-            console.info("Sikeres törlés");
-            showError("Sikeres törlés", 0);
+    update(ref(database), updates).then(() => {
+        console.info("Sikeres törlés");
+        showError("Sikeres törlés", 0);
 
-            sessionStorage.removeItem("lobbyId");
-            sessionStorage.removeItem("isHost");
+        sessionStorage.removeItem("lobbyId");
+        sessionStorage.removeItem("isHost");
 
-            gotoLobby0Div();
-        }).catch((error1) => {
-            console.error(error1);
-            findError(error1);
-        });
-    }).catch((error) => {
-        console.error(error);
-        findError(error);
+        gotoLobby0Div();
+    }).catch((error1) => {
+        console.error(error1);
+        findError(error1);
     });
 }
 
