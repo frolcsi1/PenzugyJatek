@@ -59,24 +59,66 @@
         <ul id="playersListhostul"></ul>
         <input id="startGameBtn" type="button" value="Indítás">
         <input id="closeRoomBtn" type="button" value="Szoba bezárása">
-        <p>Az oldal frissítése vagy elhagyása a szoba végleges bezárását jelentheti. Ez a művelet nem onható vissza!</p>
+        <p>Az oldal frissítése vagy elhagyása a szoba végleges bezárását jelentheti. Ez a művelet nem vonható vissza!</p>
     </div>
     <div id="lobby1playerDiv" class="hidden">
         <h1>Üdvözöllek a szobában!</h1>
         <h2 id="LobbyIdplayerh2">Szobaszám: </h2>
         <h3>Játékosok:</h3>
         <ul id="playersListplayerul"></ul>
+        <input id="exitRoomBtn0" type="button" value="Kilépés a szobából">
     </div>
-    <input id="exitRoomBtn" type="button" value="Kilépés a szobából">
 
     <div id="GameQuestionDiv" class="hidden">
         <h3>Válaszd ki, hogy melyik fogalom tartoik a következő definícióhoz:</h3>
-        <h2>Definíció</h2>
-        <input type="button" id="Option0" value="O0">
-        <input type="button" id="Option1" value="O1">
-        <input type="button" id="Option2" value="O2">
-        <input type="button" id="Option3" value="O3">
+
+        <div id="q0">
+            <h2 id="def0">Definíció1</h2>
+            <input type="radio" id="Option00" name="O0" value="a">
+            <label for="Option00" id="O00">O00</label>
+            <input type="radio" id="Option01" name="O0" value="b">
+            <label for="Option01" id="O01">O01</label>
+            <input type="radio" id="Option02" name="O0" value="c">
+            <label for="Option02" id="O02">O02</label>
+            <input type="radio" id="Option03" name="O0" value="d">
+            <label for="Option03" id="O03">O03</label>
+        </div>
+        <div id="q1">
+            <h2 id="def1">Definíció2</h2>
+            <input type="radio" id="Option10" name="O1" value="a">
+            <label for="Option10" id="O10">O10</label>
+            <input type="radio" id="Option11" name="O1" value="b">
+            <label for="Option11" id="O11">O11</label>
+            <input type="radio" id="Option12" name="O1" value="c">
+            <label for="Option12" id="O12">O12</label>
+            <input type="radio" id="Option13" name="O1" value="d">
+            <label for="Option13" id="O13">O13</label>
+        </div>
+        <div id="q2">
+            <h2 id="def2">Definíció3</h2>
+            <input type="radio" id="Option20" name="O2" value="a">
+            <label for="Option20" id="O20">O20</label>
+            <input type="radio" id="Option21" name="O2" value="b">
+            <label for="Option21" id="O21">O21</label>
+            <input type="radio" id="Option22" name="O2" value="c">
+            <label for="Option22" id="O22">O22</label>
+            <input type="radio" id="Option23" name="O2" value="d">
+            <label for="Option23" id="O23">O23</label>
+        </div>
+        <div id="q3">
+            <h2 id="def3">Definíció4</h2>
+            <input type="radio" id="Option30" name="O3" value="a">
+            <label for="Option30" id="O30">O30</label>
+            <input type="radio" id="Option31" name="O3" value="b">
+            <label for="Option31" id="O31">O31</label>
+            <input type="radio" id="Option32" name="O3" value="c">
+            <label for="Option32" id="O32">O32</label>
+            <input type="radio" id="Option33" name="O3" value="d">
+            <label for="Option33" id="O33">O33</label>
+        </div>
+        <input id="exitRoomBtn1" type="button" value="Kilépés a szobából">
     </div>
+
     <div id="GameAuctionDiv" class="hidden">
         <div id="letter0Div">
             <h1 id="letter0h1">0</h1>
@@ -103,6 +145,7 @@
             <input type="number" name="bid4" id="bid4Input" min="1">
             <input type="button" id="bid4Btn" value="Licitálás">
         </div>
+        <input id="exitRoomBtn2" type="button" value="Kilépés a szobából">
     </div>
 
     <div id="errorDiv">

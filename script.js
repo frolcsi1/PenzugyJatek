@@ -248,24 +248,85 @@ function gotoLobby1playerDiv(roomData) {
     });
 
     onValueGameSatusStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/status"), (snapshot1) => {
-        if (snapshot1.val() == 0) {
-            console.info("OK")
-        } else if (snapshot1.val()[0] == "1") {
-            console.warn(snapshot1.val());
-        } else if (snapshot1.val()[0] == "2") {
-            gotoGameAuctionDiv();
+        if (snapshot1.val() == 1) {
+            gotoGameQuestionsDiv(lobbyIdStr);
+        } else if (snapshot1.val() == 3) {
+            gotoGameAuctionDiv(lobbyIdStr);
         } else {
             console.warn(snapshot1.val());
         }
     });
     
     clearEventListeners();
-    document.querySelector("#exitRoomBtn").addEventListener('click', () => {
+    document.querySelector("#exitRoomBtn0").addEventListener('click', () => {
         exitRoom(lobbyIdStr);
     }, { signal: controller.signal });
 }
 
-function gotoGameAuctionDiv() {
+function gotoGameQuestionsDiv(lobbyIdStr) {
+    hideAll();
+    document.querySelector("#GameQuestionDiv").classList.remove("hidden");
+
+    if (onValuePlayersStop) {
+        onValuePlayersStop();
+        onValuePlayersStop = null;
+    }
+    if (onValueGameSatusStop) {
+        onValueGameSatusStop();
+        onValueGameSatusStop = null;
+    }
+    if (onValueBidListening) {
+        onValueBidListening();
+        onValueBidListening = null;
+    }
+
+    onValueGameSatusStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/status"), (snapshot1) => {
+        if (snapshot1.val() == 0) {
+            gotoLobby1playerDiv();
+        } else if (snapshot1.val() == 2) {
+            const o0 = document.querySelector('input[name="O0"]:checked');
+            const o1 = document.querySelector('input[name="O1"]:checked');
+            const o2 = document.querySelector('input[name="O2"]:checked');
+            const o3 = document.querySelector('input[name="O3"]:checked');
+            const a0 = o0?.value ?? "0";
+            const a1 = o1?.value ?? "0";
+            const a2 = o2?.value ?? "0";
+            const a3 = o3?.value ?? "0";
+            set(ref(database, 'Rooms/' + lobbyIdStr + '/answers/' + auth.currentUser.uid), {
+                a0: a0,
+                a1: a1,
+                a2: a2,
+                a3: a3,
+            });
+        } else if (snapshot1.val() == 3) {
+            gotoGameAuctionDiv(lobbyIdStr);
+        } else {
+            console.warn(snapshot1.val());
+        }
+    });
+    
+    get(ref(database, "Rooms/" + lobbyIdStr + '/questions')).then((snapshot) => {
+        const data = snapshot.val();
+        for (let i = 0; i < 4; i++) {
+            document.querySelector(`#def${i}`).textContent = data[`question${i}`];
+            const optionsRaw = data[`options${i}`];
+            const options = optionsRaw.split('\\\\');
+            for (let j = 0; j < 4; j++) {
+                document.querySelector(`#O${i}${j}`).textContent = options[j];
+            }
+        }
+    }).catch((error) => {
+        console.error(error);
+        findError(error);
+    });
+    
+    clearEventListeners();
+    document.querySelector("#exitRoomBtn1").addEventListener('click', () => {
+        exitRoom(lobbyIdStr);
+    }, { signal: controller.signal });
+}
+
+function gotoGameAuctionDiv(lobbyIdStr) {
     hideAll();
     document.querySelector("#GameAuctionDiv").classList.remove("hidden");
     
@@ -311,9 +372,17 @@ function gotoGameAuctionDiv() {
             if (char) {
                 document.querySelector(`#letter${i}h1`).innerHTML = `${char} (${dbChars[char].bidAmount} pont)`;
                 document.querySelector(`#bid${i}Input`).value = dbChars[char].bidAmount+1;
-                document.querySelector(`#bid${i}Btn`).addEventListener('onclick', () => {
-                    console.log("Licitálás");
-                    //TODO: DB-nek új ajánlat küldése, ott beállítani, hogy tudja módosítani
+                const newBtn = document.querySelector(`#bid${i}Btn`).cloneNode(true);
+                document.querySelector(`#bid${i}Btn`).replaceWith(newBtn);
+                document.querySelector(`#bid${i}Btn`).addEventListener('click', () => {
+                    console.log(dbChars[char].expire);
+                    update(ref(database, 'Rooms/' + lobbyIdStr + '/bid/' + char), {
+                        'bidAmount': Number(document.querySelector(`#bid${i}Input`).value),
+                        'char': char,
+                        'expire': Number(dbChars[char].expire) + 5000,
+                        'uid': auth.currentUser.uid
+                    });
+
                 }, { signal: controller.signal });
             } else {
                 document.querySelector(`#letter${i}h1`).innerHTML = '-';
@@ -324,7 +393,7 @@ function gotoGameAuctionDiv() {
     });
     
     clearEventListeners();
-    document.querySelector("#exitRoomBtn").addEventListener('click', () => {
+    document.querySelector("#exitRoomBtn2").addEventListener('click', () => {
         exitRoom(lobbyIdStr);
     }, { signal: controller.signal });
 }
@@ -425,8 +494,21 @@ const createLobby = () => {
             host: user.uid,
             players: {
             },
-            previousQuestionsIds: "-1;",
-            questionId: -1,
+            questions: {
+                previousQuestionsIds: "",
+                question0: "",
+                question1: "",
+                question2: "",
+                question3: "",
+                options0: "",
+                options1: "",
+                options2: "",
+                options3: "",
+                answer0: "",
+                answer1: "",
+                answer2: "",
+                answer3: "",
+            },
             score: {
             },
             status: 0,
@@ -670,12 +752,126 @@ const showError = (message, type)/* type: 0: success; 1: warning; 2: error*/ => 
 }
 
 const startGame = (lobbyIdStr) => {
-    set(ref(database, "Rooms/" + lobbyIdStr + "/status"), "2");
-    auction(lobbyIdStr);
+    questions(lobbyIdStr);
 }
 
+function questions(lobbyIdStr) {
+
+    let questions = [];
+    let options = [];
+    let answers = [];
+    let usedQuestions = '';
+    get(ref(database, 'questions')).then((snapshot) => {
+        questions = snapshot.val();
+        
+        get(ref(database, 'options')).then((snapshot1) => {
+            options = snapshot1.val() || [];
+            
+            get(ref(database, 'answers')).then((snapshot2) => {
+                answers = snapshot2.val() || [];
+
+                get(ref(database, 'Rooms/' + lobbyIdStr + '/previousQuestionsIds')).then((snapshot3) => {
+                    usedQuestions = snapshot3.val() || '';
+                    
+                    giveQuestion(lobbyIdStr, questions, options, answers, usedQuestions);
+
+
+                }).catch((error3) => {
+                    console.error(error3);
+                    findError(error3);
+                });
+                
+            }).catch((error2) => {
+                console.error(error2);
+                findError(error2);
+            });
+
+        }).catch((error1) => {
+            console.error(error1);
+            findError(error1);
+        });
+
+    }).catch((error) => {
+        console.error(error);
+        findError(error);
+    });
+}
+
+async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestions, prevAnsw = null) {
+    let newIds = [];
+    let newId = -1;
+    let newIdsStr = "";
+    let newIdStr = "";
+    let tries = 0;
+
+    for (let i = 0; i < 4; i++) {
+        tries = 0;
+        newId = Math.floor(Math.random() * questions.length);
+        newIdStr = String(newId) + ";";
+        tries++;
+        while ((usedQuestions.includes(newIdStr) || newIdsStr.includes(newIdStr)) && tries <= questions.length * 100) {
+            console.log(`${tries}/${questions.length * 100}`);
+            newId = Math.floor(Math.random() * questions.length);
+            newIdStr = String(newId) + ";";
+            tries++;
+        }
+        if (tries >= questions.length * 100) {
+            return;
+        }
+
+        newIds.push(newId);
+        newIdsStr += newIdStr;
+    }
+    
+
+    if (tries >= questions.length * 100) {
+        showError("Nem sikerült 4 új kérdást találni!", 2);
+        return;
+    }
+
+    usedQuestions = usedQuestions + newIdsStr;
+
+    let updates = {}
+    updates['previousQuestionsIds'] = usedQuestions;
+    updates['question0'] = questions[newIds[0]];
+    updates['question1'] = questions[newIds[1]];
+    updates['question2'] = questions[newIds[2]];
+    updates['question3'] = questions[newIds[3]];
+    updates['options0'] = options[newIds[0]];
+    updates['options1'] = options[newIds[1]];
+    updates['options2'] = options[newIds[2]];
+    updates['options3'] = options[newIds[3]];
+
+    console.log(updates);
+
+    try {
+        await update(ref(database, 'Rooms/' + lobbyIdStr + '/questions'), updates)
+        await set(ref(database, 'Rooms/' + lobbyIdStr + '/status'), 1);
+
+        await wait(60000);
+
+        await set(ref(database, 'Rooms/' + lobbyIdStr + '/status'), 2);
+        await wait(10000);
+
+        const snapshot = await get(ref(database, 'Rooms/' + lobbyIdStr + '/answers'))
+        const data = snapshot.val();
+        console.log(data);
+
+        //TODO: pontszámok növelése, válaszok kiadása!
+        
+        await wait(10000);
+        set(ref(database, 'Rooms/' + lobbyIdStr + '/status'), 3);
+        await wait(3000);
+        auction(lobbyIdStr);
+    } catch (error) {
+        console.error(error);
+        findError(error);
+    }
+}
+
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 function auction(lobbyIdStr) {
-    console.info("OK3")
     if (onValuePlayersStop) {
         onValuePlayersStop();
         onValuePlayersStop = null;
@@ -696,8 +892,7 @@ function auction(lobbyIdStr) {
     const dbRef = ref(database, `Rooms/${lobbyIdStr}/bid`);
     let lastCharSentTime = 0;
 
-    setInterval(async () => {
-        console.info("OK5")
+    const mainAuction = setInterval(async () => {
         const snapshot = await get(dbRef);
         let actualOffers = snapshot.val() || {};
         const now = Date.now();
@@ -707,7 +902,8 @@ function auction(lobbyIdStr) {
             if (now >= data.expire) {
                 if (data.uid !== "") {
                     showError(`A(z) ${data.char} betűt megnyerte: ${data.uid}`);
-                    //TODO: Üzenet a db-nek, hogy data.uid megkapta a betűt!!!
+                    console.log(`A(z) ${data.char} betűt megnyerte: ${data.uid}`);
+                    //TODO: Üzenet a db-nek, hogy data.uid megkapta a betűt és a pontok levonása és a betűk meglétének figyelése!!!
                 }
                 delete actualOffers[key];
                 changed = true;
@@ -733,7 +929,12 @@ function auction(lobbyIdStr) {
         if (changed) {
             await update(ref(database, `Rooms/${lobbyIdStr}/`), { 'bid': actualOffers });
         }
+
+        if (actualNumberOfOffers == 0 && abc.length == 0) {
+            clearInterval(mainAuction);
+        }
     }, 200);
+    set(ref(database, 'Rooms/' + lobbyIdStr + '/status'), 1);
 }
 
 
