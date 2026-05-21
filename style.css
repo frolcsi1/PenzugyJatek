@@ -14,5 +14,75 @@
 }
 
 .hidden {
-    display: none;
+    display: none !important;
+}
+#privacyPolicyDiv input{
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: 5px;
+    border-radius: 20px;
+}
+#privacyPolicyDiv input{
+    background-color: darkgreen;
+}
+#loginDiv{
+display: block;
+margin: 0 auto;
+align-items: center;
+justify-content: center;
+width: 30%;
+height: 25%;
+border: 2px solid black;
+padding:20px;
+text-align:center;
+}
+#loginDiv input:is([type="button"], [type="submit"], [type="reset"]),#joinBtn,#createBtn{
+    background-color: blue;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: 5px;
+    border-radius: 20px;
+}
+#loginDiv input[type="button"]:hover,#joinBtn:hover,#createBtn:hover{
+    background-color: darkblue;
+}
+#lobby0Div{
+display: block;
+margin: 0 auto;
+align-items: center;
+justify-content: center;
+width: 30%;
+height: 25%;
+border: 2px solid black;
+padding:20px;
+text-align:center;
+}
+#logoutBtn{
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: 5px;
+    border-radius: 20px;
+}
+#logoutBtn:hover{
+    background-color: darkred;
+}
+#lobbyIdInput,#lobbyPINInput,#lobbyNicknameInput{
+    padding: 3px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid black;
+    width: 100%;
+    height: 30px;
+    box-sizing: border-box;
+}
+#lobby0Div p{
+    text-align: left;
 }
