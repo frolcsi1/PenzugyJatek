@@ -149,6 +149,9 @@ function gotoLobby0Div() {
     document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
     document.querySelector("#joinBtn").addEventListener('click', joinLobby, { signal: controller.signal });
     document.querySelector("#logoutBtn").addEventListener('click', logOut, { signal: controller.signal });
+    document.querySelector("#toCreate").addEventListener('click', showCreate, { signal: controller.signal });
+    document.querySelector("#toJoin").addEventListener('click', showJoin, { signal: controller.signal });
+    document.querySelector("#toRules").addEventListener('click', showRules, { signal: controller.signal });
 }
 
 function gotoLobby1hostDiv(roomData) {
@@ -936,8 +939,23 @@ function auction(lobbyIdStr) {
     }, 200);
     set(ref(database, 'Rooms/' + lobbyIdStr + '/status'), 1);
 }
+function showCreate() {
+    document.querySelector("#lobby0RoomDiv").classList.remove("hidden");
+    document.querySelector("#lobby0RulesDiv").classList.add("hidden");
+    document.querySelectorAll(".createRoom").forEach(el => el.classList.remove("hidden"));
+    document.querySelectorAll(".joinRoom").forEach(el => el.classList.add("hidden"));
+}
+function showRules() {
+    document.querySelector("#lobby0RoomDiv").classList.add("hidden");
+    document.querySelector("#lobby0RulesDiv").classList.remove("hidden");
 
-
+}
+function showJoin() {
+    document.querySelector("#lobby0RoomDiv").classList.remove("hidden");
+    document.querySelector("#lobby0RulesDiv").classList.add("hidden");
+    document.querySelectorAll(".joinRoom").forEach(el => el.classList.remove("hidden"));
+    document.querySelectorAll(".createRoom").forEach(el => el.classList.add("hidden")); 
+}
 /************************************************************************************************************************************************
  * END OF FUNCTIONS
  * START OF CODE

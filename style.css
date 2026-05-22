@@ -17,7 +17,7 @@
     display: none !important;
 }
 #privacyPolicyDiv input{
-    background-color: green;
+    background-color: blue;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -25,8 +25,8 @@
     margin: 5px;
     border-radius: 20px;
 }
-#privacyPolicyDiv input{
-    background-color: darkgreen;
+#privacyPolicyDiv input:hover{
+    background-color: darkblue;
 }
 #loginDiv{
 display: block;
@@ -39,7 +39,7 @@ border: 2px solid black;
 padding:20px;
 text-align:center;
 }
-#loginDiv input:is([type="button"], [type="submit"], [type="reset"]),#joinBtn,#createBtn{
+#loginDiv input:is([type="button"], [type="submit"], [type="reset"]),#joinBtn,#createBtn,#lobby1hostDiv input[type="button"],#lobby1playerDiv input[type="button"]{
     background-color: blue;
     color: white;
     border: none;
@@ -48,10 +48,10 @@ text-align:center;
     margin: 5px;
     border-radius: 20px;
 }
-#loginDiv input[type="button"]:hover,#joinBtn:hover,#createBtn:hover{
+#loginDiv input[type="button"]:hover,#joinBtn:hover,#createBtn:hover,#lobby1hostDiv input[type="button"]:hover,#lobby1playerDiv input[type="button"]:hover{
     background-color: darkblue;
 }
-#lobby0Div{
+#lobby0Div,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv{
 display: block;
 margin: 0 auto;
 align-items: center;
@@ -84,5 +84,55 @@ text-align:center;
     box-sizing: border-box;
 }
 #lobby0Div p{
+    text-align: left;
+}
+body{
+    background-color:rgb(0, 80, 0)
+}
+#privacyPolicyDiv,#loginDiv,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv,#lobby0Div{
+    background-color: rgb(96, 231, 96);
+    border-radius: 10px;
+    padding:10px;
+    border: 2px solid black;
+}
+#toCreate,#toJoin,#toRules{
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius:20px 20px 0 0;
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 0;
+    box-sizing: border-box;
+    border: 2px solid black;
+    border-bottom: none;
+}
+#lobby0MenuDiv{
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    display: flex;
+
+}
+#lobby0RoomDiv,#lobby0RulesDiv{
+    background-color: green;
+    padding: 0;
+    border-radius: 0 0 20px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 2px solid black;
+    padding: 10px;
+
+}
+#toCreate:hover,#toJoin:hover,#toRules:hover{
+    background-color: darkgreen;
+
+}
+#lobby0RoomDiv > h2 {
+  margin-top: 0;
+}
+#lobby1hostDiv ul li,#lobby1playerDiv ul li{
     text-align: left;
 }

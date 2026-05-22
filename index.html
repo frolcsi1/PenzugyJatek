@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Pénzügyjáték</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -48,15 +48,28 @@
     <div id="lobby0Div" class="hidden">
         <h1>Üdvözöllek a lobbiban!</h1>
         <h2 id="userNh2">Felhasználónév: </h2>
-        <h2>Szoba létrehozása, csatlakozás szobához: </h2>
+        <div id="lobby0MenuDiv">
+        <input type="button" id="toCreate" value="Szoba létrehozása">
+        <input type="button" id="toJoin" value="Csatlakozás szobához">
+        <input type="button" id="toRules" value="Szabályok">
+        </div>
+        <div id="lobby0RoomDiv">
+        <h2 class="createRoom">Szoba létrehozása</h2>
+        <h2 class="joinRoom hidden">Csatlakozás szobához</h2>
+        <h2 class="rules hidden">Szabályok</h2>
         <p>Szobaszám: </p>
         <input type="number" name="lobbyId" id="lobbyIdInput" min="0" max="9999" placeholder="Szobaszám">
         <p>Szobakód: </p>
         <input type="number" name="lobbyPIN" id="lobbyPINInput" min="0" max="9999" placeholder="Szobakód">
         <p>Felhasználónév: </p>
         <input type="text" name="lobbyNickname" id="lobbyNicknameInput" placeholder="Felhasználónév">
-        <input type="button" id="createBtn" value="Létrehozás">
-        <input type="button" id="joinBtn" value="Csatlakozás">
+        <input type="button" id="createBtn" value="Létrehozás" class="createRoom">
+        <input type="button" id="joinBtn" value="Csatlakozás" class="joinRoom hidden">
+        </div>
+        <div id="lobby0RulesDiv" class="hidden">
+            <h2>Játékszabályok:</h2>
+            
+        </div>
         <hr>    
         <input type="button" id="logoutBtn" value="Kijelentkezés">
     </div>
