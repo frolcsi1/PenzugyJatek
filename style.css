@@ -52,15 +52,16 @@ text-align:center;
     background-color: darkblue;
 }
 #lobby0Div,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv{
-display: block;
-margin: 0 auto;
-align-items: center;
-justify-content: center;
-width: 30%;
-height: 25%;
-border: 2px solid black;
-padding:20px;
-text-align:center;
+    display: block;
+    margin: 100px auto 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 30%;
+    min-width: 300px;
+    height: 25%;
+    border: 2px solid black;
+    padding:20px;
+    text-align:center;
 }
 #logoutBtn{
     background-color: red;
@@ -99,7 +100,7 @@ body{
     background-color: green;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 10px 0;
     cursor: pointer;
     border-radius:20px 20px 0 0;
     flex: 1 1 0;
@@ -135,4 +136,14 @@ body{
 }
 #lobby1hostDiv ul li,#lobby1playerDiv ul li{
     text-align: left;
+}
+.radio-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+}
+.radio-group input[type="radio"] {
+    transform: scale(1.5);
+    margin-right: 15px;
 }

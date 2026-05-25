@@ -49,22 +49,22 @@
         <h1>Üdvözöllek a lobbiban!</h1>
         <h2 id="userNh2">Felhasználónév: </h2>
         <div id="lobby0MenuDiv">
-        <input type="button" id="toCreate" value="Szoba létrehozása">
-        <input type="button" id="toJoin" value="Csatlakozás szobához">
-        <input type="button" id="toRules" value="Szabályok">
+            <input type="button" id="toCreate" value="Létrehozás">
+            <input type="button" id="toJoin" value="Csatlakozás">
+            <input type="button" id="toRules" value="Szabályok">
         </div>
         <div id="lobby0RoomDiv">
-        <h2 class="createRoom">Szoba létrehozása</h2>
-        <h2 class="joinRoom hidden">Csatlakozás szobához</h2>
-        <h2 class="rules hidden">Szabályok</h2>
-        <p>Szobaszám: </p>
-        <input type="number" name="lobbyId" id="lobbyIdInput" min="0" max="9999" placeholder="Szobaszám">
-        <p>Szobakód: </p>
-        <input type="number" name="lobbyPIN" id="lobbyPINInput" min="0" max="9999" placeholder="Szobakód">
-        <p>Felhasználónév: </p>
-        <input type="text" name="lobbyNickname" id="lobbyNicknameInput" placeholder="Felhasználónév">
-        <input type="button" id="createBtn" value="Létrehozás" class="createRoom">
-        <input type="button" id="joinBtn" value="Csatlakozás" class="joinRoom hidden">
+            <h2 class="createRoom hidden">Szoba létrehozása</h2>
+            <h2 class="joinRoom">Csatlakozás szobához</h2>
+            <h2 class="rules hidden">Szabályok</h2>
+            <p>Szobaszám: </p>
+            <input type="number" name="lobbyId" id="lobbyIdInput" min="0" max="9999" placeholder="Szobaszám">
+            <p>Szobakód: </p>
+            <input type="number" name="lobbyPIN" id="lobbyPINInput" min="0" max="9999" placeholder="Szobakód">
+            <p class="joinRoom">Felhasználónév: </p>
+            <input class="joinRoom" type="text" name="lobbyNickname" id="lobbyNicknameInput" placeholder="Felhasználónév">
+            <input type="button" id="createBtn" value="Létrehozás" class="createRoom hidden">
+            <input type="button" id="joinBtn" value="Csatlakozás" class="joinRoom">
         </div>
         <div id="lobby0RulesDiv" class="hidden">
             <h2>Játékszabályok:</h2>
@@ -95,47 +95,95 @@
 
         <div id="q0">
             <h2 id="def0">Definíció1</h2>
-            <input type="radio" id="Option00" name="O0" value="a">
-            <label for="Option00" id="O00">O00</label>
-            <input type="radio" id="Option01" name="O0" value="b">
-            <label for="Option01" id="O01">O01</label>
-            <input type="radio" id="Option02" name="O0" value="c">
-            <label for="Option02" id="O02">O02</label>
-            <input type="radio" id="Option03" name="O0" value="d">
-            <label for="Option03" id="O03">O03</label>
+            <div class="radio-group">
+                <input type="radio" id="Option00" name="O0" value="a">
+                <label for="Option00" id="O00">O00</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option01" name="O0" value="b">
+                <label for="Option01" id="O01">O01</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option02" name="O0" value="c">
+                <label for="Option02" id="O02">O02</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option03" name="O0" value="d">
+                <label for="Option03" id="O03">O03</label>
+            </div>
+            <hr>
         </div>
         <div id="q1">
             <h2 id="def1">Definíció2</h2>
-            <input type="radio" id="Option10" name="O1" value="a">
-            <label for="Option10" id="O10">O10</label>
-            <input type="radio" id="Option11" name="O1" value="b">
-            <label for="Option11" id="O11">O11</label>
-            <input type="radio" id="Option12" name="O1" value="c">
-            <label for="Option12" id="O12">O12</label>
-            <input type="radio" id="Option13" name="O1" value="d">
-            <label for="Option13" id="O13">O13</label>
+            <div class="radio-group">
+                <input type="radio" id="Option10" name="O1" value="a">
+                <label for="Option10" id="O10">O10</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option11" name="O1" value="b">
+                <label for="Option11" id="O11">O11</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option12" name="O1" value="c">
+                <label for="Option12" id="O12">O12</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option13" name="O1" value="d">
+                <label for="Option13" id="O13">O13</label>
+            </div>
+            <hr>
         </div>
         <div id="q2">
             <h2 id="def2">Definíció3</h2>
-            <input type="radio" id="Option20" name="O2" value="a">
-            <label for="Option20" id="O20">O20</label>
-            <input type="radio" id="Option21" name="O2" value="b">
-            <label for="Option21" id="O21">O21</label>
-            <input type="radio" id="Option22" name="O2" value="c">
-            <label for="Option22" id="O22">O22</label>
-            <input type="radio" id="Option23" name="O2" value="d">
-            <label for="Option23" id="O23">O23</label>
+            <div class="radio-group">
+                <input type="radio" id="Option20" name="O2" value="a">
+                <label for="Option20" id="O20">O20</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option21" name="O2" value="b">
+                <label for="Option21" id="O21">O21</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option22" name="O2" value="c">
+                <label for="Option22" id="O22">O22</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option23" name="O2" value="d">
+                <label for="Option23" id="O23">O23</label>
+            </div>
+            <hr>
         </div>
         <div id="q3">
             <h2 id="def3">Definíció4</h2>
-            <input type="radio" id="Option30" name="O3" value="a">
-            <label for="Option30" id="O30">O30</label>
-            <input type="radio" id="Option31" name="O3" value="b">
-            <label for="Option31" id="O31">O31</label>
-            <input type="radio" id="Option32" name="O3" value="c">
-            <label for="Option32" id="O32">O32</label>
-            <input type="radio" id="Option33" name="O3" value="d">
-            <label for="Option33" id="O33">O33</label>
+            <div class="radio-group">
+                <input type="radio" id="Option30" name="O3" value="a">
+                <label for="Option30" id="O30">O30</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option31" name="O3" value="b">
+                <label for="Option31" id="O31">O31</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option32" name="O3" value="c">
+                <label for="Option32" id="O32">O32</label>
+            </div>
+            <br>
+            <div class="radio-group">
+                <input type="radio" id="Option33" name="O3" value="d">
+                <label for="Option33" id="O33">O33</label>
+            </div>
+            <hr>
         </div>
         <input id="exitRoomBtn1" type="button" value="Kilépés a szobából">
     </div>
@@ -167,6 +215,14 @@
             <input type="button" id="bid4Btn" value="Licitálás">
         </div>
         <input id="exitRoomBtn2" type="button" value="Kilépés a szobából">
+    </div>
+
+    <div id="GameEndDiv" class="hidden">
+        <h1>Vége a játéknak</h1>
+    </div>
+
+    <div id="pointsDiv">
+        <h1 id="pointsH1">Pontok: 0</h1>
     </div>
 
     <div id="errorDiv">

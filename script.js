@@ -28,12 +28,17 @@ let controller = new AbortController();
 let onValuePlayersStop = null;
 let onValueGameSatusStop = null;
 let onValueBidListening = null;
+let onValueMainWord = null;
+let onValuePoints = null
 let errorTimeout = null;
 const errorDiv = document.querySelector("#errorDiv");
 let autoLogin = true;
 const emailDomain = "@penzugyjatek.notexists"
 let newPlayersAllowed = true
 let letters = [];
+let players = {};
+let mainWordDef = "";
+let mainWordLength = 0;
 
 
 /************************************************************************************************************************************************
@@ -166,6 +171,14 @@ function gotoLobby1hostDiv(roomData) {
         onValueGameSatusStop();
         onValueGameSatusStop = null;
     }
+    if (onValueBidListening) {
+        onValueBidListening();
+        onValueBidListening = null;
+    }
+    if (onValueMainWord) {
+        onValueMainWord();
+        onValueMainWord = null;
+    }
     
     document.querySelector("#LobbyIdhosth2").textContent = "Szobaszám: " + String(roomData.Code);
     const listElement = document.querySelector("#playersListhostul");
@@ -194,14 +207,6 @@ function gotoLobby1hostDiv(roomData) {
         gotoLobby0Div();
         return;
     });
-
-    onValueGameSatusStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/status"), (snapshot1) => {
-        if (snapshot1.val() == 0) {
-            console.info("OK")
-        } else {
-            console.warn(snapshot1.val());
-        }
-    });
     
     clearEventListeners();
     document.querySelector("#startGameBtn").addEventListener('click', () => {
@@ -219,6 +224,7 @@ function gotoLobby1hostDiv(roomData) {
 function gotoLobby1playerDiv(roomData) {
     hideAll();
     document.querySelector("#lobby1playerDiv").classList.remove("hidden");
+    const user = auth.currentUser;
     
     if (onValuePlayersStop) {
         onValuePlayersStop();
@@ -227,6 +233,14 @@ function gotoLobby1playerDiv(roomData) {
     if (onValueGameSatusStop) {
         onValueGameSatusStop();
         onValueGameSatusStop = null;
+    }
+    if (onValueBidListening) {
+        onValueBidListening();
+        onValueBidListening = null;
+    }
+    if (onValueMainWord) {
+        onValueMainWord();
+        onValueMainWord = null;
     }
 
     document.querySelector("#LobbyIdplayerh2").textContent = "Szobaszám: " + String(roomData.Code);
@@ -259,6 +273,22 @@ function gotoLobby1playerDiv(roomData) {
             console.warn(snapshot1.val());
         }
     });
+
+    onValueMainWord = onValue(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + user.uid + '/mainDef'), (snapshot3) => {
+        const data = snapshot3.val();
+        if (onValueMainWord && data) {
+            mainWordDef = data;
+            get(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + user.uid + '/length'), (snapshot4) => {
+                mainWordLength = snapshot4.val();
+                onValueMainWord();
+            })
+        }
+    });
+
+    onValuePoints = onValue(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + user.uid + '/points'), (snapshot5) => {
+        const points = snapshot5.val();
+        document.querySelector("#pointsH1").textContent = 'Pontok: ' + points;
+    });
     
     clearEventListeners();
     document.querySelector("#exitRoomBtn0").addEventListener('click', () => {
@@ -282,6 +312,17 @@ function gotoGameQuestionsDiv(lobbyIdStr) {
         onValueBidListening();
         onValueBidListening = null;
     }
+    if (onValueMainWord) {
+        onValueMainWord();
+        onValueMainWord = null;
+    }
+    
+    for (let i = 0; i < 4 ; i++) {
+        for (let j = 0; j < 4; j++) {
+            document.querySelector(`#Option${i}${j}`).checked = false;
+            document.querySelector(`#Option${i}${j}`).disabled = false;
+        }
+    }
 
     onValueGameSatusStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/status"), (snapshot1) => {
         if (snapshot1.val() == 0) {
@@ -301,6 +342,11 @@ function gotoGameQuestionsDiv(lobbyIdStr) {
                 a2: a2,
                 a3: a3,
             });
+            for (let i = 0; i < 4 ; i++) {
+                for (let j = 0; j < 4; j++) {
+                    document.querySelector(`#Option${i}${j}`).disabled = true;
+                }
+            }
         } else if (snapshot1.val() == 3) {
             gotoGameAuctionDiv(lobbyIdStr);
         } else {
@@ -345,6 +391,20 @@ function gotoGameAuctionDiv(lobbyIdStr) {
         onValueBidListening();
         onValueBidListening = null;
     }
+    if (onValueMainWord) {
+        onValueMainWord();
+        onValueMainWord = null;
+    }
+
+    onValueGameSatusStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/status"), (snapshot1) => {
+        if (snapshot1.val() == 1) {
+            gotoGameQuestionsDiv(lobbyIdStr);
+        } else if (snapshot1.val() == 4) {
+            gotoGameEnd(lobbyIdStr);
+        } else {
+            console.warn(snapshot1.val());
+        }
+    });
 
     let offers = [null, null, null, null, null, null];
 
@@ -395,6 +455,37 @@ function gotoGameAuctionDiv(lobbyIdStr) {
         })
     });
     
+    clearEventListeners();
+    document.querySelector("#exitRoomBtn2").addEventListener('click', () => {
+        exitRoom(lobbyIdStr);
+    }, { signal: controller.signal });
+}
+
+function gotoGameEnd(lobbyIdStr) {
+    hideAll();
+    document.querySelector("#GameEndDiv").classList.remove("hidden");
+    
+    if (onValuePlayersStop) {
+        onValuePlayersStop();
+        onValuePlayersStop = null;
+    }
+    if (onValueGameSatusStop) {
+        onValueGameSatusStop();
+        onValueGameSatusStop = null;
+    }
+    if (onValueBidListening) {
+        onValueBidListening();
+        onValueBidListening = null;
+    }
+    if (onValueMainWord) {
+        onValueMainWord();
+        onValueMainWord = null;
+    }
+    if (onValuePoints) {
+        onValuePoints();
+        onValuePoints = null;
+    }
+
     clearEventListeners();
     document.querySelector("#exitRoomBtn2").addEventListener('click', () => {
         exitRoom(lobbyIdStr);
@@ -516,6 +607,8 @@ const createLobby = () => {
             },
             status: 0,
             newPlayerAllowed: true,
+            main: {},
+            winner: "",
         });
 
         get(ref(database, 'Rooms/' + lobbyIdStr)).then((snapshot1) => {
@@ -755,7 +848,27 @@ const showError = (message, type)/* type: 0: success; 1: warning; 2: error*/ => 
 }
 
 const startGame = (lobbyIdStr) => {
-    questions(lobbyIdStr);
+    get(ref(database, 'Rooms/' + lobbyIdStr + '/players')).then((snapshot) => {
+        console.log(snapshot);
+        console.log(snapshot.val());
+        Object.keys(snapshot.val()).forEach((uid) => {
+            players[uid] = {
+                nickname: snapshot.val()[uid].nickname,
+                points: 100,
+                mainDef: "valami",
+                mainWord: "s",
+                length: "megoldas".length,
+                chars: {},
+            }
+            //TODO: mainWord/mainDef/points(0) GENERÁLÁSA!!!
+        });
+        set(ref(database, 'Rooms/' + lobbyIdStr + '/main'), players);
+        questions(lobbyIdStr);
+    }).catch((error) => {
+        console.error(error);
+        findError(error);
+    });
+    console.log("ok")
 }
 
 function questions(lobbyIdStr) {
@@ -773,7 +886,7 @@ function questions(lobbyIdStr) {
             get(ref(database, 'answers')).then((snapshot2) => {
                 answers = snapshot2.val() || [];
 
-                get(ref(database, 'Rooms/' + lobbyIdStr + '/previousQuestionsIds')).then((snapshot3) => {
+                get(ref(database, 'Rooms/' + lobbyIdStr + '/questions/previousQuestionsIds')).then((snapshot3) => {
                     usedQuestions = snapshot3.val() || '';
                     
                     giveQuestion(lobbyIdStr, questions, options, answers, usedQuestions);
@@ -860,7 +973,17 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
         const data = snapshot.val();
         console.log(data);
 
-        //TODO: pontszámok növelése, válaszok kiadása!
+        Object.entries(data).forEach(([uid, a]) => {
+            let plus = 0
+            if (a.a0 == answers[newIds[0]]) {plus++;}
+            if (a.a1 == answers[newIds[1]]) {plus++;}
+            if (a.a2 == answers[newIds[2]]) {plus++;}
+            if (a.a3 == answers[newIds[3]]) {plus++;}
+            players[uid].points += plus;
+        });
+
+        update(ref(database, 'Rooms/' + lobbyIdStr + '/main'), players);
+
         
         await wait(10000);
         set(ref(database, 'Rooms/' + lobbyIdStr + '/status'), 3);
@@ -875,6 +998,7 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function auction(lobbyIdStr) {
+    let stop = false;
     if (onValuePlayersStop) {
         onValuePlayersStop();
         onValuePlayersStop = null;
@@ -906,7 +1030,33 @@ function auction(lobbyIdStr) {
                 if (data.uid !== "") {
                     showError(`A(z) ${data.char} betűt megnyerte: ${data.uid}`);
                     console.log(`A(z) ${data.char} betűt megnyerte: ${data.uid}`);
-                    //TODO: Üzenet a db-nek, hogy data.uid megkapta a betűt és a pontok levonása és a betűk meglétének figyelése!!!
+                    
+                    players[data.uid].points -= data.bidAmount;
+                    players[data.uid].chars[data.char] = true;
+                    update(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + data.uid), players[data.uid]);
+
+                    let win = true;
+                    if (players[data.uid].points < 0) {win=false;}
+                    else {
+                        const chars = Object.keys(players[data.uid].chars);
+                        players[data.uid].mainWord.split('').forEach((c) => {
+                            console.log(c);
+                            console.log(c.toUpperCase());
+                            console.log(chars);
+                            if (!chars.includes(c.toUpperCase())) {
+                                win=false;
+                                console.log('HIBA:' + c);
+                            }
+                        });
+                    }
+                    if (win) {
+                        update(ref(database, 'Rooms/' + lobbyIdStr ), {
+                            status: 4,
+                            winner: players[data.uid].nickname + '(' + data.uid + ')',
+                        });
+                        console.log('Győztes: ' + players[data.uid].nickname + '(' + data.uid + ')')
+                        stop = true;
+                    }
                 }
                 delete actualOffers[key];
                 changed = true;
@@ -933,11 +1083,16 @@ function auction(lobbyIdStr) {
             await update(ref(database, `Rooms/${lobbyIdStr}/`), { 'bid': actualOffers });
         }
 
-        if (actualNumberOfOffers == 0 && abc.length == 0) {
+        if ((actualNumberOfOffers == 0 && abc.length == 0) || stop) {
             clearInterval(mainAuction);
+            if (stop) {
+                console.log("Win")
+            } else {
+                console.log("giveQuestion")
+                questions(lobbyIdStr);
+            }
         }
     }, 200);
-    set(ref(database, 'Rooms/' + lobbyIdStr + '/status'), 1);
 }
 function showCreate() {
     document.querySelector("#lobby0RoomDiv").classList.remove("hidden");
