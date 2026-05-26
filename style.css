@@ -37,7 +37,7 @@ width: 30%;
 height: 25%;
 border: 2px solid black;
 padding:20px;
-text-align:center;
+text-align:left;
 }
 #loginDiv input:is([type="button"], [type="submit"], [type="reset"]),#joinBtn,#createBtn,#lobby1hostDiv input[type="button"],#lobby1playerDiv input[type="button"]{
     background-color: blue;
@@ -51,7 +51,7 @@ text-align:center;
 #loginDiv input[type="button"]:hover,#joinBtn:hover,#createBtn:hover,#lobby1hostDiv input[type="button"]:hover,#lobby1playerDiv input[type="button"]:hover{
     background-color: darkblue;
 }
-#lobby0Div,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv{
+#lobby0Div,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv,#GameEndDiv{    
     display: block;
     margin: 100px auto 0 auto;
     align-items: center;
@@ -63,7 +63,7 @@ text-align:center;
     padding:20px;
     text-align:center;
 }
-#logoutBtn{
+#logoutBtn,#exitRoomBtn1,#exitRoomBtn2{
     background-color: red;
     color: white;
     border: none;
@@ -72,7 +72,7 @@ text-align:center;
     margin: 5px;
     border-radius: 20px;
 }
-#logoutBtn:hover{
+#logoutBtn:hover,#exitRoomBtn1:hover,#exitRoomBtn2:hover{
     background-color: darkred;
 }
 #lobbyIdInput,#lobbyPINInput,#lobbyNicknameInput{
@@ -146,4 +146,39 @@ body{
 .radio-group input[type="radio"] {
     transform: scale(1.5);
     margin-right: 15px;
+}
+#letter0Div input,#letter1Div input,#letter2Div input,#letter3Div input,#letter4Div input{
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin: 0px;
+    border-radius: 20px;
+}
+#letter0Div input[type="button"],#letter1Div input[type="button"],#letter2Div input[type="button"],#letter3Div input[type="button"],#letter4Div input[type="button"]{
+    background-color: blue;
+    color: white;
+}
+#letter0Div input[type="button"]:hover,#letter1Div input[type="button"]:hover,#letter2Div input[type="button"]:hover,#letter3Div input[type="button"]:hover,#letter4Div input[type="button"]:hover{
+    background-color: darkblue;
+    color: white;
+}
+#yourWordLetters{
+    list-style: none;
+    padding: 0;
+    float: left;
+    margin:1px;
+    display: flex;
+}
+#wordP,#wordDef{
+    text-align: left;
+    margin: 0;
+}
+#wordDef {
+    flex-basis: 100%;
+}
+#wordDiv {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
