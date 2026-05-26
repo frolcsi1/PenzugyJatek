@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+    <div id="errorDiv">
+
+    </div>
     <div id="privacyPolicyDiv" class="hidden">
         <input class="hu" type="button" id="ChangeToEnglishBtn" value="Change to English">
         <input class="en hidden" type="button" id="ChangeToHungarianBtn" value="Válts magyarra">
@@ -68,7 +71,9 @@
         </div>
         <div id="lobby0RulesDiv" class="hidden">
             <h2>Játékszabályok:</h2>
-            
+            <p>A játék során ki kell találnod a megadott fogalmat a definíciód alapján, majd a többi játékossal versenyezve meg kell szerezned a fogalom betűit. Az a játékos nyer,aki leghamarabb gyűjti össze a megfelelő betűket.</p>
+            <p>A betűket licitálással lehet megszerezni.</p>
+            <p>A licitáláshoz pontokat gyűjthetsz kérdések megválaszolásával.</p>
         </div>
         <hr>    
         <input type="button" id="logoutBtn" value="Kijelentkezés">
@@ -238,12 +243,10 @@
         <h1>Vége a játéknak</h1>
     </div>
 
-    <div id="pointsDiv">
+    <div id="pointsDiv" class="hidden">
         <h1 id="pointsH1">Pontok: 0</h1>
     </div>
 
-    <div id="errorDiv">
 
-    </div>
 </body>
 </html>

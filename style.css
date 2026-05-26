@@ -51,7 +51,7 @@ text-align:left;
 #loginDiv input[type="button"]:hover,#joinBtn:hover,#createBtn:hover,#lobby1hostDiv input[type="button"]:hover,#lobby1playerDiv input[type="button"]:hover{
     background-color: darkblue;
 }
-#lobby0Div,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv,#GameEndDiv{    
+#lobby0Div,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv,#GameEndDiv,#loginDiv{    
     display: block;
     margin: 100px auto 0 auto;
     align-items: center;
@@ -181,4 +181,15 @@ body{
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+}
+#errorDiv{
+    display: block;
+    margin:  0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 30%;
+    min-width: 300px;
+    height: 25%;
+    padding:2px;
+    text-align:center;
 }

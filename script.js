@@ -60,6 +60,8 @@ function hideAll() {
     document.querySelector("#lobby1playerDiv").classList.add("hidden");
     document.querySelector("#GameQuestionDiv").classList.add("hidden");
     document.querySelector("#GameAuctionDiv").classList.add("hidden");
+    document.querySelector("#errorDiv").classList.add("hidden");
+    document.querySelector("#pointsDiv").classList.add("hidden");
 }
 
 function gotoPrivacyPolicy() {
@@ -299,7 +301,7 @@ function gotoLobby1playerDiv(roomData) {
 function gotoGameQuestionsDiv(lobbyIdStr) {
     hideAll();
     document.querySelector("#GameQuestionDiv").classList.remove("hidden");
-
+    document.querySelector("#pointsDiv").classList.remove("hidden");
     if (onValuePlayersStop) {
         onValuePlayersStop();
         onValuePlayersStop = null;
@@ -464,7 +466,7 @@ function gotoGameAuctionDiv(lobbyIdStr) {
 function gotoGameEnd(lobbyIdStr) {
     hideAll();
     document.querySelector("#GameEndDiv").classList.remove("hidden");
-    
+    document.querySelector("#pointsDiv").classList.add("hidden");
     if (onValuePlayersStop) {
         onValuePlayersStop();
         onValuePlayersStop = null;
