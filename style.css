@@ -53,7 +53,7 @@ text-align:left;
 }
 #lobby0Div,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv,#GameEndDiv,#loginDiv{    
     display: block;
-    margin: 100px auto 0 auto;
+    margin: 200px auto 0 auto;
     align-items: center;
     justify-content: center;
     width: 30%;
@@ -201,4 +201,11 @@ body{
     appearance: none;
     border: 6px solid red;
     border-radius: 50%;
+}
+
+#top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
 }

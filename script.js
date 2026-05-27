@@ -317,6 +317,7 @@ function gotoGameQuestionsDiv(lobbyIdStr) {
     hideAll();
     document.querySelector("#GameQuestionDiv").classList.remove("hidden");
     document.querySelector("#pointsDiv").classList.remove("hidden");
+    document.querySelector("#wordDiv").classList.remove("hidden");
     if (onValuePlayersStop) {
         onValuePlayersStop();
         onValuePlayersStop = null;
@@ -536,6 +537,7 @@ function gotoGameEnd(lobbyIdStr) {
     hideAll();
     document.querySelector("#GameEndDiv").classList.remove("hidden");
     document.querySelector("#pointsDiv").classList.add("hidden");
+    document.querySelector("#wordDiv").classList.add("hidden");
     if (onValuePlayersStop) {
         onValuePlayersStop();
         onValuePlayersStop = null;
@@ -558,13 +560,32 @@ function gotoGameEnd(lobbyIdStr) {
     }
 
     
-    get(ref(database, "Rooms/" + lobbyIdStr + '/winner')).then((snapshot) => {
-        const data = snapshot.val();
+    get(ref(database, "Rooms/" + lobbyIdStr + '/winnerNickname')).then((snapshot) => {
+        const WNickname = snapshot.val();
+        
+        get(ref(database, "Rooms/" + lobbyIdStr + '/winnerUid')).then((snapshot) => {
+            const WUid = snapshot.val();
+
+            if (WUid == auth.currentUser.uid) {
+                document.querySelector("#winnerH2").textContent = 'Gratulálok!\nTe nyertél!';
+            } else {
+                document.querySelector("#winnerH2").textContent = WNickname;
+                document.querySelector("#winnerH6").textContent = '(' + WUid + ')';
+            }
+
+            clearEventListeners();
+            document.querySelector("#exitRoomBtn3").classList.remove('hidden');
+            document.querySelector("#exitRoomBtn3").addEventListener('click', () => {
+                exitRoom(lobbyIdStr);
+            }, { signal: controller.signal });
+        }).catch((error) => {
+            console.error(error);
+            findError(error);
+        });
         
         document.querySelector("#winnerH2").textContent = 'Győztes: ' + data;
 
         clearEventListeners();
-        document.querySelector("#exitRoomBtn2").classList.remove('hidden');
         document.querySelector("#exitRoomBtn2").addEventListener('click', () => {
             exitRoom(lobbyIdStr);
         }, { signal: controller.signal });
@@ -939,7 +960,7 @@ const startGame = (lobbyIdStr) => {
                 word = definitions[Math.floor(Math.random() * definitions.length)].split("\\\\");
                 players[uid] = {
                     nickname: snapshot.val()[uid].nickname,
-                    points: 10,
+                    points: 0,
                     mainDef: word[1],
                     mainWord: word[0],
                     length: word[0].length,
@@ -1137,7 +1158,8 @@ function auction(lobbyIdStr) {
                     if (win) {
                         update(ref(database, 'Rooms/' + lobbyIdStr ), {
                             status: 4,
-                            winner: players[data.uid].nickname + ' (' + data.uid + ')',
+                            winnerNickname: players[data.uid].nickname,
+                            winnerUid: data.uid,
                         });
                         console.log('Győztes: ' + players[data.uid].nickname + '(' + data.uid + ')')
                         stop = true;

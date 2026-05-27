@@ -7,9 +7,6 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <div id="errorDiv">
-
-    </div>
     <div id="privacyPolicyDiv" class="hidden">
         <input class="hu" type="button" id="ChangeToEnglishBtn" value="Change to English">
         <input class="en hidden" type="button" id="ChangeToHungarianBtn" value="Válts magyarra">
@@ -196,15 +193,6 @@
     <div id="GameAuctionDiv" class="hidden">
         <h2>Licitálás</h2>
         <hr>
-        <div id="wordDiv">   
-        <p id="wordP">A te betűid:</p>
-        <p id="yourWordLetters"></p>
-        <p id="wordDef">Definíció:</p>
-        <p id="wordLen">Hossz:</p>
-
-        
-        </div>
-        <hr>
         <div id="letter0Div">
             <h1 id="letter0h1">0</h1>
             <input type="number" name="bid0" id="bid0Input" min="1">
@@ -237,12 +225,24 @@
     <div id="GameEndDiv" class="hidden">
         <h1>Vége a játéknak</h1>
         <h2 id="winnerH2">Győztes: </h2>
+        <h2 id="winnerH6">Győztes: </h2>
+        <input id="exitRoomBtn3" type="button" value="Kilépés a szobából">
     </div>
 
-    <div id="pointsDiv" class="hidden">
-        <h1 id="pointsH1">Pontok: 0</h1>
+    <div id="top">
+        <div id="pointsDiv" class="hidden">
+            <h1 id="pointsH1">Pontok: 0</h1>
+        </div>
+        <div id="wordDiv" class="hidden">   
+            <p id="wordP">A te betűid:</p>
+            <p id="yourWordLetters"></p>
+            <p id="wordDef">Definíció:</p>
+            <p id="wordLen">Hossz:</p>
+        </div>
+        <div id="errorDiv" class="error">
+            valami hiba
+        </div>
     </div>
-
 
 </body>
 </html>
