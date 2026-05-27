@@ -176,10 +176,21 @@ body{
     flex-basis: 100%;
 }
 #wordDiv {
-    display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+    background-color: rgb(96, 231, 96);
+    display: block;
+    margin: 100px auto 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 30%;
+    min-width: 300px;
+    height: 25%;
+    border: 2px solid black;
+    padding:10px;
+    text-align:center;
+    border-radius: 10px;
 }
 #errorDiv{
     display: block;
