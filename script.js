@@ -63,7 +63,6 @@ function hideAll() {
     document.querySelector("#GameQuestionDiv").classList.add("hidden");
     document.querySelector("#GameAuctionDiv").classList.add("hidden");
     document.querySelector("#errorDiv").classList.add("hidden");
-    document.querySelector("#wordDiv").classList.add("hidden");
 }
 
 function gotoPrivacyPolicy() {
