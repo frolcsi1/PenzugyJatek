@@ -557,11 +557,21 @@ function gotoGameEnd(lobbyIdStr) {
         onValuePoints = null;
     }
 
-    clearEventListeners();
-    document.querySelector("#exitRoomBtn2").classList.remove('hidden');
-    document.querySelector("#exitRoomBtn2").addEventListener('click', () => {
-        exitRoom(lobbyIdStr);
-    }, { signal: controller.signal });
+    
+    get(ref(database, "Rooms/" + lobbyIdStr + '/winner')).then((snapshot) => {
+        const data = snapshot.val();
+        
+        document.querySelector("#winnerH2").textContent = 'Győztes: ' + data;
+
+        clearEventListeners();
+        document.querySelector("#exitRoomBtn2").classList.remove('hidden');
+        document.querySelector("#exitRoomBtn2").addEventListener('click', () => {
+            exitRoom(lobbyIdStr);
+        }, { signal: controller.signal });
+    }).catch((error) => {
+        console.error(error);
+        findError(error);
+    });
 }
 
 const signUp = () => {
@@ -1123,7 +1133,7 @@ function auction(lobbyIdStr) {
                     if (win) {
                         update(ref(database, 'Rooms/' + lobbyIdStr ), {
                             status: 4,
-                            winner: players[data.uid].nickname + '(' + data.uid + ')',
+                            winner: players[data.uid].nickname + ' (' + data.uid + ')',
                         });
                         console.log('Győztes: ' + players[data.uid].nickname + '(' + data.uid + ')')
                         stop = true;
