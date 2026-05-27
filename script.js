@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getDatabase, ref, get, set, onValue, remove, update, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+import { getDatabase, ref, get, set, onValue, remove, update, onDisconnect, query, orderByKey, equalTo } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
 
 
 /************************************************************************************************************************************************
@@ -873,46 +873,34 @@ const startGame = (lobbyIdStr) => {
     console.log("ok")
 }
 
-function questions(lobbyIdStr) {
+async function questions(lobbyIdStr) {
 
     let questions = [];
     let options = [];
     let answers = [];
     let usedQuestions = '';
-    get(ref(database, 'questions')).then((snapshot) => {
+    try {
+        const snapshot = await get(ref(database, 'questions'));
         questions = snapshot.val();
         
-        get(ref(database, 'options')).then((snapshot1) => {
-            options = snapshot1.val() || [];
-            
-            get(ref(database, 'answers')).then((snapshot2) => {
-                answers = snapshot2.val() || [];
+        const snapshot1 = await get(ref(database, 'options'));
+        options = snapshot1.val() || [];
 
-                get(ref(database, 'Rooms/' + lobbyIdStr + '/questions/previousQuestionsIds')).then((snapshot3) => {
-                    usedQuestions = snapshot3.val() || '';
+        const answersRef = ref(database, 'answers');
+        const hostQuery = query(answersRef, orderByKey(), equalTo(lobbyIdStr));
+
+        const snapshot2 = await get(hostQuery);
+        answers = snapshot2.val() || [];
+
+        const snapshot3 = await get(ref(database, 'Rooms/' + lobbyIdStr + '/questions/previousQuestionsIds'));
+        usedQuestions = snapshot3.val() || '';
                     
-                    giveQuestion(lobbyIdStr, questions, options, answers, usedQuestions);
+        giveQuestion(lobbyIdStr, questions, options, answers, usedQuestions);
 
-
-                }).catch((error3) => {
-                    console.error(error3);
-                    findError(error3);
-                });
-                
-            }).catch((error2) => {
-                console.error(error2);
-                findError(error2);
-            });
-
-        }).catch((error1) => {
-            console.error(error1);
-            findError(error1);
-        });
-
-    }).catch((error) => {
+    } catch (error) {
         console.error(error);
         findError(error);
-    });
+    };
 }
 
 async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestions, prevAnsw = null) {
