@@ -63,6 +63,7 @@ function hideAll() {
     document.querySelector("#GameQuestionDiv").classList.add("hidden");
     document.querySelector("#GameAuctionDiv").classList.add("hidden");
     document.querySelector("#errorDiv").classList.add("hidden");
+    document.querySelector("#wordDiv").classList.add("hidden");
 }
 
 function gotoPrivacyPolicy() {
@@ -317,6 +318,7 @@ function gotoGameQuestionsDiv(lobbyIdStr) {
     hideAll();
     document.querySelector("#GameQuestionDiv").classList.remove("hidden");
     document.querySelector("#pointsDiv").classList.remove("hidden");
+    document.querySelector("#wordDiv").classList.remove("hidden");
     if (onValuePlayersStop) {
         onValuePlayersStop();
         onValuePlayersStop = null;
@@ -536,6 +538,7 @@ function gotoGameEnd(lobbyIdStr) {
     hideAll();
     document.querySelector("#GameEndDiv").classList.remove("hidden");
     document.querySelector("#pointsDiv").classList.add("hidden");
+    document.querySelector("#wordDiv").classList.add("hidden");
     if (onValuePlayersStop) {
         onValuePlayersStop();
         onValuePlayersStop = null;
