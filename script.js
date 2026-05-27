@@ -1029,6 +1029,10 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
     updates['options1'] = options[newIds[1]];
     updates['options2'] = options[newIds[2]];
     updates['options3'] = options[newIds[3]];
+    updates2['answer0'] = '';
+    updates2['answer1'] = '';
+    updates2['answer2'] = '';
+    updates2['answer3'] = '';
 
     console.log(updates);
 
