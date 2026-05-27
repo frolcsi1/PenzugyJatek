@@ -163,17 +163,16 @@ body{
     color: white;
 }
 #yourWordLetters{
-    list-style: none;
     padding: 0;
     float: left;
     margin:1px;
     display: flex;
 }
-#wordP,#wordDef{
+#wordP,#wordDef, #wordLen{
     text-align: left;
     margin: 0;
 }
-#wordDef {
+#wordDef, #wordLen {
     flex-basis: 100%;
 }
 #wordDiv {
@@ -192,4 +191,14 @@ body{
     height: 25%;
     padding:2px;
     text-align:center;
+}
+.goodAns {
+    appearance: none;
+    border: 6px solid lime;
+    border-radius: 50%;
+}
+.badAns {
+    appearance: none;
+    border: 6px solid red;
+    border-radius: 50%;
 }

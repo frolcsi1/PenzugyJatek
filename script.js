@@ -29,7 +29,9 @@ let onValuePlayersStop = null;
 let onValueGameSatusStop = null;
 let onValueBidListening = null;
 let onValueMainWord = null;
-let onValuePoints = null
+let onValuePoints = null;
+let onValueMainChars = null;
+let onValueAnswers = null;
 let errorTimeout = null;
 const errorDiv = document.querySelector("#errorDiv");
 let autoLogin = true;
@@ -61,7 +63,6 @@ function hideAll() {
     document.querySelector("#GameQuestionDiv").classList.add("hidden");
     document.querySelector("#GameAuctionDiv").classList.add("hidden");
     document.querySelector("#errorDiv").classList.add("hidden");
-    document.querySelector("#pointsDiv").classList.add("hidden");
 }
 
 function gotoPrivacyPolicy() {
@@ -280,16 +281,30 @@ function gotoLobby1playerDiv(roomData) {
         const data = snapshot3.val();
         if (onValueMainWord && data) {
             mainWordDef = data;
-            get(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + user.uid + '/length'), (snapshot4) => {
+            document.querySelector("#wordDef").textContent = "Definíció: " + mainWordDef;
+            get(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + user.uid + '/length')).then((snapshot4) => {
                 mainWordLength = snapshot4.val();
+                document.querySelector("#wordLen").textContent = "Hossz: " + mainWordLength + " karakter.";
                 onValueMainWord();
-            })
+            }).catch((error) => {
+                console.error(error);
+                findError(error);
+            });
         }
     });
 
-    onValuePoints = onValue(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + user.uid + '/points'), (snapshot5) => {
+    onValueMainChars = onValue(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + user.uid + '/points'), (snapshot5) => {
         const points = snapshot5.val();
         document.querySelector("#pointsH1").textContent = 'Pontok: ' + points;
+    });
+
+    onValuePoints = onValue(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + user.uid + '/chars'), (snapshot6) => {
+        const chars = snapshot6.val() || {};
+        let charsP = ""
+        Object.keys(chars).forEach((c) => {
+            charsP += ` ${c.toUpperCase()};`;
+        });
+        document.querySelector("#yourWordLetters").innerHTML = charsP;
     });
     
     clearEventListeners();
@@ -323,8 +338,62 @@ function gotoGameQuestionsDiv(lobbyIdStr) {
         for (let j = 0; j < 4; j++) {
             document.querySelector(`#Option${i}${j}`).checked = false;
             document.querySelector(`#Option${i}${j}`).disabled = false;
+            document.querySelector(`#Option${i}${j}`).classList.remove('goodAns');
+            document.querySelector(`#Option${i}${j}`).classList.remove('badAns');
         }
     }
+
+    onValueAnswers = onValue(ref(database, 'Rooms/' + lobbyIdStr + '/questions/answer0'), (snapshot0) => {
+        let ans = [0,0,0,0];
+        const ans0 = snapshot0.val();
+        if (onValueAnswers && ans0) {
+            ans[0] = ans0;
+            get(ref(database, 'Rooms/' + lobbyIdStr + '/questions/answer1')).then((snapshot1) => {
+                ans[1] = snapshot1.val();
+                get(ref(database, 'Rooms/' + lobbyIdStr + '/questions/answer2')).then((snapshot2) => {
+                    ans[2] = snapshot2.val();
+                    get(ref(database, 'Rooms/' + lobbyIdStr + '/questions/answer3')).then((snapshot3) => {
+                        ans[3] = snapshot3.val();
+                        for (let i = 0; i < 4; i++) {
+                            let opt;
+                            switch (ans[i]) {
+                                case 'a':
+                                    opt = 0;
+                                    break;
+                                case 'b':
+                                    opt = 1;
+                                    break;
+                                case 'c':
+                                    opt = 2;
+                                    break;
+                                case 'd':
+                                    opt = 3;
+                                    break;
+                            }
+                            for (let j = 0; j < 4; j++) {
+                                console.log(`#Option${i}${j}`);
+                                if (j==opt) {
+                                    document.querySelector(`#Option${i}${j}`).classList.add('goodAns');
+                                } else {
+                                    document.querySelector(`#Option${i}${j}`).classList.add('badAns');
+                                }
+                            }
+                        }
+                        onValueAnswers();
+                    }).catch((error) => {
+                        console.error(error);
+                        findError(error);
+                    });;
+                }).catch((error) => {
+                    console.error(error);
+                    findError(error);
+                });
+            }).catch((error) => {
+                console.error(error);
+                findError(error);
+            });
+        }
+    });
 
     onValueGameSatusStop = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/status"), (snapshot1) => {
         if (snapshot1.val() == 0) {
@@ -489,6 +558,7 @@ function gotoGameEnd(lobbyIdStr) {
     }
 
     clearEventListeners();
+    document.querySelector("#exitRoomBtn2").classList.remove('hidden');
     document.querySelector("#exitRoomBtn2").addEventListener('click', () => {
         exitRoom(lobbyIdStr);
     }, { signal: controller.signal });
@@ -859,13 +929,14 @@ const startGame = (lobbyIdStr) => {
                 word = definitions[Math.floor(Math.random() * definitions.length)].split("\\\\");
                 players[uid] = {
                     nickname: snapshot.val()[uid].nickname,
-                    points: 0,
+                    points: 10,
                     mainDef: word[1],
                     mainWord: word[0],
-                    length: "megoldas".length,
+                    length: word[0].length,
                     chars: {},
                 }
                 showError(`A fő szó: ${players[uid].mainWord}, a definíció: ${players[uid].mainDef}`, 0);
+                console.log(`A fő szó: ${players[uid].mainWord}, a definíció: ${players[uid].mainDef}`, 0);
             });
             set(ref(database, 'Rooms/' + lobbyIdStr + '/main'), players);
             questions(lobbyIdStr);
@@ -885,15 +956,12 @@ async function questions(lobbyIdStr) {
     let usedQuestions = '';
     try {
         const snapshot = await get(ref(database, 'questions'));
-        questions = snapshot.val();
+        questions = snapshot.val() || [];
         
         const snapshot1 = await get(ref(database, 'options'));
         options = snapshot1.val() || [];
 
-        const answersRef = ref(database, 'answers');
-        const hostQuery = query(answersRef, orderByKey(), equalTo(lobbyIdStr));
-
-        const snapshot2 = await get(hostQuery);
+        const snapshot2 = await get(ref(database, 'answers'));
         answers = snapshot2.val() || [];
 
         const snapshot3 = await get(ref(database, 'Rooms/' + lobbyIdStr + '/questions/previousQuestionsIds'));
@@ -955,7 +1023,7 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
     console.log(updates);
 
     try {
-        await update(ref(database, 'Rooms/' + lobbyIdStr + '/questions'), updates)
+        await update(ref(database, 'Rooms/' + lobbyIdStr + '/questions'), updates);
         await set(ref(database, 'Rooms/' + lobbyIdStr + '/status'), 1);
 
         await wait(60000);
@@ -963,7 +1031,7 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
         await set(ref(database, 'Rooms/' + lobbyIdStr + '/status'), 2);
         await wait(10000);
 
-        const snapshot = await get(ref(database, 'Rooms/' + lobbyIdStr + '/answers'))
+        const snapshot = await get(ref(database, 'Rooms/' + lobbyIdStr + '/answers'));
         const data = snapshot.val();
         console.log(data);
 
@@ -976,7 +1044,16 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
             players[uid].points += plus;
         });
 
-        update(ref(database, 'Rooms/' + lobbyIdStr + '/main'), players);
+        await update(ref(database, 'Rooms/' + lobbyIdStr + '/main'), players);
+
+        let updates2 = {}
+        updates2['answer0'] = answers[newIds[0]];
+        updates2['answer1'] = answers[newIds[1]];
+        updates2['answer2'] = answers[newIds[2]];
+        updates2['answer3'] = answers[newIds[3]];
+        console.log(updates2);
+
+        await update(ref(database, 'Rooms/' + lobbyIdStr + '/questions'), updates2);
 
         
         await wait(10000);
