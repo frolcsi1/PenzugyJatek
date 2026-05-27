@@ -942,7 +942,7 @@ const startGame = (lobbyIdStr) => {
                 word = definitions[Math.floor(Math.random() * definitions.length)].split("\\\\");
                 players[uid] = {
                     nickname: snapshot.val()[uid].nickname,
-                    points: 10,
+                    points: 50,
                     mainDef: word[1],
                     mainWord: word[0],
                     length: word[0].length,
@@ -1054,10 +1054,10 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
 
         Object.entries(data).forEach(([uid, a]) => {
             let plus = 0
-            if (a.a0 == answers[newIds[0]]) {plus++;}
-            if (a.a1 == answers[newIds[1]]) {plus++;}
-            if (a.a2 == answers[newIds[2]]) {plus++;}
-            if (a.a3 == answers[newIds[3]]) {plus++;}
+            if (a.a0 == answers[newIds[0]]) {plus=plus+10;}
+            if (a.a1 == answers[newIds[1]]) {plus=plus+10;}
+            if (a.a2 == answers[newIds[2]]) {plus=plus+10;}
+            if (a.a3 == answers[newIds[3]]) {plus=plus+10;}
             players[uid].points += plus;
         });
 
