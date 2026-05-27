@@ -852,33 +852,29 @@ const showError = (message, type)/* type: 0: success; 1: warning; 2: error*/ => 
 const startGame = (lobbyIdStr) => {
     let definitions = [];
     let word = [];
-    get(ref(database, 'definitions')).then((snapshot1) => {
-        definitions = snapshot1.val();
-    get(ref(database, 'Rooms/' + lobbyIdStr + '/players')).then((snapshot) => {
-        console.log(snapshot);
-        console.log(snapshot.val());
-        Object.keys(snapshot.val()).forEach((uid) => {
-            word = definitions[Math.floor(Math.random() * definitions.length)].split("\\");
-            players[uid] = {
-                nickname: snapshot.val()[uid].nickname,
-                points: 100,
-                mainDef: word[1],
-                mainWord: word[0],
-                length: "megoldas".length,
-                chars: {},
-
-            }
-            showError(`A fő szó: ${players[uid].mainWord}, a definíció: ${players[uid].mainDef}`, 0);
-            //TODO: mainWord/mainDef/points(0) GENERÁLÁSA!!!
+    get(ref(database, 'words')).then((snapshot1) => {
+        definitions = snapshot1.val() || {};
+        get(ref(database, 'Rooms/' + lobbyIdStr + '/players')).then((snapshot) => {
+            Object.keys(snapshot.val()).forEach((uid) => {
+                word = definitions[Math.floor(Math.random() * definitions.length)].split("\\\\");
+                players[uid] = {
+                    nickname: snapshot.val()[uid].nickname,
+                    points: 0,
+                    mainDef: word[1],
+                    mainWord: word[0],
+                    length: "megoldas".length,
+                    chars: {},
+                }
+                showError(`A fő szó: ${players[uid].mainWord}, a definíció: ${players[uid].mainDef}`, 0);
+            });
+            set(ref(database, 'Rooms/' + lobbyIdStr + '/main'), players);
+            questions(lobbyIdStr);
+        }).catch((error) => {
+            console.error(error);
+            findError(error);
         });
-        set(ref(database, 'Rooms/' + lobbyIdStr + '/main'), players);
-        questions(lobbyIdStr);
-    }).catch((error) => {
-        console.error(error);
-        findError(error);
+        console.log("ok")
     });
-    console.log("ok")
-});
 }
 
 async function questions(lobbyIdStr) {
