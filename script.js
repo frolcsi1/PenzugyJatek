@@ -1078,7 +1078,7 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
 
         await update(ref(database, 'Rooms/' + lobbyIdStr + '/main'), players);
 
-        let updates2 = {}
+        let updates2 = {};
         updates2['answer0'] = answers[newIds[0]];
         updates2['answer1'] = answers[newIds[1]];
         updates2['answer2'] = answers[newIds[2]];
