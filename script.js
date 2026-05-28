@@ -1060,7 +1060,7 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
         const data = snapshot.val();
 
         Object.entries(data).forEach(([uid, a]) => {
-            let plus = 0
+            let plus = 0;
             if (a.a0 == answers[newIds[0]]) {
                 plus+=5;
             }
