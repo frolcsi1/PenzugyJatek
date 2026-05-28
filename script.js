@@ -275,8 +275,6 @@ function gotoLobby1playerDiv(roomData) {
             gotoGameQuestionsDiv(lobbyIdStr);
         } else if (snapshot1.val() == 3) {
             gotoGameAuctionDiv(lobbyIdStr);
-        } else {
-            console.warn(snapshot1.val());
         }
     });
 
@@ -375,7 +373,6 @@ function gotoGameQuestionsDiv(lobbyIdStr) {
                                     break;
                             }
                             for (let j = 0; j < 4; j++) {
-                                console.log(`#Option${i}${j}`);
                                 if (j==opt) {
                                     document.querySelector(`#Option${i}${j}`).classList.add('goodAns');
                                 } else {
@@ -424,8 +421,6 @@ function gotoGameQuestionsDiv(lobbyIdStr) {
             }
         } else if (snapshot1.val() == 3) {
             gotoGameAuctionDiv(lobbyIdStr);
-        } else {
-            console.warn(snapshot1.val());
         }
     });
     
@@ -476,8 +471,6 @@ function gotoGameAuctionDiv(lobbyIdStr) {
             gotoGameQuestionsDiv(lobbyIdStr);
         } else if (snapshot1.val() == 4) {
             gotoGameEnd(lobbyIdStr);
-        } else {
-            console.warn(snapshot1.val());
         }
     });
 
@@ -513,7 +506,6 @@ function gotoGameAuctionDiv(lobbyIdStr) {
                 const newBtn = document.querySelector(`#bid${i}Btn`).cloneNode(true);
                 document.querySelector(`#bid${i}Btn`).replaceWith(newBtn);
                 document.querySelector(`#bid${i}Btn`).addEventListener('click', () => {
-                    console.log(dbChars[char].expire);
                     update(ref(database, 'Rooms/' + lobbyIdStr + '/bid/' + char), {
                         'bidAmount': Number(document.querySelector(`#bid${i}Input`).value),
                         'char': char,
@@ -969,8 +961,6 @@ const startGame = (lobbyIdStr) => {
                     length: word[0].length,
                     chars: {},
                 }
-                showError(`A fő szó: ${players[uid].mainWord}, a definíció: ${players[uid].mainDef}`, 0);
-                console.log(`A fő szó: ${players[uid].mainWord}, a definíció: ${players[uid].mainDef}`, 0);
             });
             set(ref(database, 'Rooms/' + lobbyIdStr + '/main'), players);
             questions(lobbyIdStr);
@@ -978,7 +968,6 @@ const startGame = (lobbyIdStr) => {
             console.error(error);
             findError(error);
         });
-        console.log("ok")
     });
 }
 
@@ -1022,7 +1011,7 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
         newIdStr = String(newId) + ";";
         tries++;
         while ((usedQuestions.includes(newIdStr) || newIdsStr.includes(newIdStr)) && tries <= questions.length * 100) {
-            console.log(`${tries}/${questions.length * 100}`);
+            console.info(`${tries}/${questions.length * 100}`);
             newId = Math.floor(Math.random() * questions.length);
             newIdStr = String(newId) + ";";
             tries++;
@@ -1038,7 +1027,7 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
 
     if (tries >= questions.length * 100) {
         showError("Nem sikerült 4 új kérdást találni!", 2);
-        return;
+        auction();
     }
 
     usedQuestions = usedQuestions + newIdsStr;
@@ -1058,8 +1047,6 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
     updates['answer2'] = '';
     updates['answer3'] = '';
 
-    console.log(updates);
-
     try {
         await update(ref(database, 'Rooms/' + lobbyIdStr + '/questions'), updates);
         await set(ref(database, 'Rooms/' + lobbyIdStr + '/status'), 1);
@@ -1071,7 +1058,6 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
 
         const snapshot = await get(ref(database, 'Rooms/' + lobbyIdStr + '/answers'));
         const data = snapshot.val();
-        console.log(data);
 
         Object.entries(data).forEach(([uid, a]) => {
             let plus = 0
@@ -1089,7 +1075,6 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
         updates2['answer1'] = answers[newIds[1]];
         updates2['answer2'] = answers[newIds[2]];
         updates2['answer3'] = answers[newIds[3]];
-        console.log(updates2);
 
         await update(ref(database, 'Rooms/' + lobbyIdStr + '/questions'), updates2);
 
@@ -1137,9 +1122,6 @@ function auction(lobbyIdStr) {
         for (const [key, data] of Object.entries(actualOffers)) {
             if (now >= data.expire) {
                 if (data.uid !== "") {
-                    showError(`A(z) ${data.char} betűt megnyerte: ${data.uid}`);
-                    console.log(`A(z) ${data.char} betűt megnyerte: ${data.uid}`);
-                    
                     players[data.uid].points -= data.bidAmount;
                     players[data.uid].chars[data.char] = true;
                     update(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + data.uid), players[data.uid]);
@@ -1149,12 +1131,8 @@ function auction(lobbyIdStr) {
                     else {
                         const chars = Object.keys(players[data.uid].chars);
                         players[data.uid].mainWord.split('').forEach((c) => {
-                            console.log(c);
-                            console.log(c.toUpperCase());
-                            console.log(chars);
                             if (!chars.includes(c.toUpperCase())) {
                                 win=false;
-                                console.log('HIBA:' + c);
                             }
                         });
                     }
@@ -1164,7 +1142,7 @@ function auction(lobbyIdStr) {
                             winnerNickname: players[data.uid].nickname,
                             winnerUid: data.uid,
                         });
-                        console.log('Győztes: ' + players[data.uid].nickname + '(' + data.uid + ')')
+                        console.info('Győztes: ' + players[data.uid].nickname + '(' + data.uid + ')')
                         stop = true;
                     }
                 }
@@ -1196,9 +1174,8 @@ function auction(lobbyIdStr) {
         if ((actualNumberOfOffers == 0 && abc.length == 0) || stop) {
             clearInterval(mainAuction);
             if (stop) {
-                console.log("Win")
+                console.info("End")
             } else {
-                console.log("giveQuestion")
                 questions(lobbyIdStr);
             }
         }
