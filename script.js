@@ -300,11 +300,11 @@ function gotoLobby1playerDiv(roomData) {
 
     onValuePoints = onValue(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + user.uid + '/chars'), (snapshot6) => {
         const chars = snapshot6.val() || {};
-        let charsP = ""
+        let charsP = "A te betűid:"
         Object.keys(chars).forEach((c) => {
             charsP += ` ${c.toUpperCase()};`;
         });
-        document.querySelector("#yourWordLetters").innerHTML = charsP;
+        document.querySelector("#wordP").innerHTML = charsP;
     });
     
     clearEventListeners();
