@@ -150,6 +150,7 @@ function gotoLobby0Div() {
     }
 
     hideAll();
+    document.querySelector("#GameEndDiv").classList.add("hidden");
     document.querySelector("#lobby0Div").classList.remove("hidden");
     document.querySelector("#userNh2").textContent = "Felhasználónév: " + (auth.currentUser.email.replace(emailDomain, ""));
     
@@ -478,7 +479,7 @@ function gotoGameAuctionDiv(lobbyIdStr) {
         }
     });
 
-    let offers = [null, null, null, null, null, null];
+    let offers = [null, null, null, null, null];
 
     onValueBidListening = onValue(ref(database, 'Rooms/' + lobbyIdStr + "/bid"), (snapshot) => {
         const dbChars = snapshot.val() || {};
