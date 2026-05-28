@@ -963,7 +963,7 @@ const startGame = (lobbyIdStr) => {
                 word = definitions[Math.floor(Math.random() * definitions.length)].split("\\\\");
                 players[uid] = {
                     nickname: snapshot.val()[uid].nickname,
-                    points: 50,
+                    points: 20,
                     mainDef: word[1],
                     mainWord: word[0],
                     length: word[0].length,
@@ -1075,10 +1075,10 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
 
         Object.entries(data).forEach(([uid, a]) => {
             let plus = 0
-            if (a.a0 == answers[newIds[0]]) {plus=plus+10;}
-            if (a.a1 == answers[newIds[1]]) {plus=plus+10;}
-            if (a.a2 == answers[newIds[2]]) {plus=plus+10;}
-            if (a.a3 == answers[newIds[3]]) {plus=plus+10;}
+            if (a.a0 == answers[newIds[0]]) {plus=plus+5;}
+            if (a.a1 == answers[newIds[1]]) {plus=plus+5;}
+            if (a.a2 == answers[newIds[2]]) {plus=plus+5;}
+            if (a.a3 == answers[newIds[3]]) {plus=plus+5;}
             players[uid].points += plus;
         });
 
@@ -1117,7 +1117,7 @@ function auction(lobbyIdStr) {
         onValueGameSatusStop = null;
     }
 
-    let abc = ["A", "Á", "B", "C", "Cs", "D", "Dz", "Dzs", "E", "É", "F", "G", "Gy", "H", "I", "Í", "J", "K", "L", "Ly","M", "N", "Ny", "O", "Ó", "Ö", "Ő", "P", "Q", "R", "S", "Sz", "T", "Ty", "U", "Ú", "Ü", "Ű", "V", "W", "X", "Y", "Z", "Zs"];
+    let abc = ["A", "Á", "B", "C", "D", "E", "É", "F", "G", "H", "I", "Í", "J", "K", "L","M", "N", "O", "Ó", "Ö", "Ő", "P", "Q", "R", "S", "T", "U", "Ú", "Ü", "Ű", "V", "W", "X", "Y", "Z"];
 
     for (let i = abc.length-1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i+1));
