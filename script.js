@@ -1061,10 +1061,18 @@ async function giveQuestion(lobbyIdStr, questions, options, answers, usedQuestio
 
         Object.entries(data).forEach(([uid, a]) => {
             let plus = 0
-            if (a.a0 == answers[newIds[0]]) {plus=plus+5;}
-            if (a.a1 == answers[newIds[1]]) {plus=plus+5;}
-            if (a.a2 == answers[newIds[2]]) {plus=plus+5;}
-            if (a.a3 == answers[newIds[3]]) {plus=plus+5;}
+            if (a.a0 == answers[newIds[0]]) {
+                plus+=5;
+            }
+            if (a.a1 == answers[newIds[1]]) {
+                plus+=5;
+            }
+            if (a.a2 == answers[newIds[2]]) {
+                plus+=5;
+            }
+            if (a.a3 == answers[newIds[3]]) {
+                plus+=5;
+            }
             players[uid].points += plus;
         });
 
@@ -1113,6 +1121,8 @@ function auction(lobbyIdStr) {
     const dbRef = ref(database, `Rooms/${lobbyIdStr}/bid`);
     let lastCharSentTime = 0;
 
+    let soldChars = [];
+
     const mainAuction = setInterval(async () => {
         const snapshot = await get(dbRef);
         let actualOffers = snapshot.val() || {};
@@ -1121,7 +1131,8 @@ function auction(lobbyIdStr) {
 
         for (const [key, data] of Object.entries(actualOffers)) {
             if (now >= data.expire) {
-                if (data.uid !== "") {
+                if (data.uid !== "" && !soldChars.includes(data.char) && players[data.uid].points >= data.bidAmount) {
+                    soldChars.push(data.char);
                     players[data.uid].points -= data.bidAmount;
                     players[data.uid].chars[data.char] = true;
                     update(ref(database, 'Rooms/' + lobbyIdStr + '/main/' + data.uid), players[data.uid]);
