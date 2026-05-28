@@ -562,9 +562,9 @@ function gotoGameEnd(lobbyIdStr) {
             const WUid = snapshot.val();
 
             if (WUid == auth.currentUser.uid) {
-                document.querySelector("#winnerH2").textContent = 'Gratulálok!\nTe nyertél!';
+                document.querySelector("#winnerH2").textContent = 'Gratulálok!\n🎉Te nyertél!🎉';
             } else {
-                document.querySelector("#winnerH2").textContent = WNickname;
+                document.querySelector("#winnerH2").textContent = WNickname + ' nyert!🎉';
                 document.querySelector("#winnerH6").textContent = '(' + WUid + ')';
             }
 
