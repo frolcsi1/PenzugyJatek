@@ -39,7 +39,7 @@ border: 2px solid black;
 padding:20px;
 text-align:left;
 }
-#loginDiv input:is([type="button"], [type="submit"], [type="reset"]),#joinBtn,#createBtn,#lobby1hostDiv input[type="button"],#lobby1playerDiv input[type="button"]{
+#loginDiv input:is([type="button"], [type="submit"], [type="reset"]),#exitGameNoBtn,#joinBtn,#createBtn,#lobby1hostDiv input[type="button"],#lobby1playerDiv input[type="button"]{
     background-color: blue;
     color: white;
     border: none;
@@ -48,10 +48,10 @@ text-align:left;
     margin: 5px;
     border-radius: 20px;
 }
-#loginDiv input[type="button"]:hover,#joinBtn:hover,#createBtn:hover,#lobby1hostDiv input[type="button"]:hover,#lobby1playerDiv input[type="button"]:hover{
+#loginDiv input[type="button"]:hover,#joinBtn:hover,#exitGameNoBtn:hover,#createBtn:hover,#lobby1hostDiv input[type="button"]:hover,#lobby1playerDiv input[type="button"]:hover{
     background-color: darkblue;
 }
-#lobby0Div,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv,#GameEndDiv,#loginDiv{    
+#lobby0Div,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv,#GameEndDiv,#loginDiv,#exitGameAsk{    
     display: block;
     margin: 20px auto 0 auto;
     align-items: center;
@@ -63,7 +63,7 @@ text-align:left;
     padding:20px;
     text-align:center;
 }
-#logoutBtn,#exitRoomBtn1,#exitRoomBtn2,#exitRoomBtn3{
+#logoutBtn,#exitRoomBtn1,#exitRoomBtn2,#exitRoomBtn3,#exitGameYesBtn{
     background-color: red;
     color: white;
     border: none;
@@ -72,7 +72,7 @@ text-align:left;
     margin: 5px;
     border-radius: 20px;
 }
-#logoutBtn:hover,#exitRoomBtn1:hover,#exitRoomBtn2:hover{
+#logoutBtn:hover,#exitRoomBtn1:hover,#exitRoomBtn2:hover,#exitGameYesBtn:hover{
     background-color: darkred;
 }
 #lobbyIdInput,#lobbyPINInput,#lobbyNicknameInput{
@@ -90,7 +90,7 @@ text-align:left;
 body{
     background-color:rgb(0, 80, 0)
 }
-#privacyPolicyDiv,#loginDiv,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv,#lobby0Div{
+#privacyPolicyDiv,#loginDiv,#lobby1hostDiv,#lobby1playerDiv,#GameQuestionDiv,#GameAuctionDiv,#lobby0Div,#exitGameAsk,#GameEndDiv{
     background-color: rgb(96, 231, 96);
     border-radius: 10px;
     padding:10px;
@@ -233,6 +233,7 @@ body{
     border-radius: 20px;
     border: 3px double #00f;
     max-width: 40%;
+    margin: 20px 10px;
 }
 #pointsH1 {
     color: #00f;
@@ -245,4 +246,7 @@ body{
     }.warn {
     background-color: orange;
     color: black;
+}
+#exitGameAsk{
+    background-color:orange;
 }

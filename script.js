@@ -153,6 +153,8 @@ function gotoLobby0Div() {
     document.querySelector("#GameEndDiv").classList.add("hidden");
     document.querySelector("#lobby0Div").classList.remove("hidden");
     document.querySelector("#userNh2").textContent = "Felhasználónév: " + (auth.currentUser.email.replace(emailDomain, ""));
+    document.querySelector("#pointsDiv").classList.add("hidden");
+    document.querySelector("#wordDiv").classList.add("hidden");
     
     clearEventListeners();
     document.querySelector("#createBtn").addEventListener('click', createLobby, { signal: controller.signal });
@@ -310,7 +312,7 @@ function gotoLobby1playerDiv(roomData) {
     
     clearEventListeners();
     document.querySelector("#exitRoomBtn0").addEventListener('click', () => {
-        exitRoom(lobbyIdStr);
+        askExitGame(lobbyIdStr);
     }, { signal: controller.signal });
 }
 
@@ -444,7 +446,7 @@ function gotoGameQuestionsDiv(lobbyIdStr) {
     
     clearEventListeners();
     document.querySelector("#exitRoomBtn1").addEventListener('click', () => {
-        exitRoom(lobbyIdStr);
+        askExitGame(lobbyIdStr);
     }, { signal: controller.signal });
 }
 
@@ -530,7 +532,7 @@ function gotoGameAuctionDiv(lobbyIdStr) {
     
     clearEventListeners();
     document.querySelector("#exitRoomBtn2").addEventListener('click', () => {
-        exitRoom(lobbyIdStr);
+        askExitGame(lobbyIdStr);
     }, { signal: controller.signal });
 }
 
@@ -577,7 +579,7 @@ function gotoGameEnd(lobbyIdStr) {
             clearEventListeners();
             document.querySelector("#exitRoomBtn3").classList.remove('hidden');
             document.querySelector("#exitRoomBtn3").addEventListener('click', () => {
-                exitRoom(lobbyIdStr);
+                askExitGame(lobbyIdStr);
             }, { signal: controller.signal });
         }).catch((error) => {
             console.error(error);
@@ -588,7 +590,7 @@ function gotoGameEnd(lobbyIdStr) {
 
         clearEventListeners();
         document.querySelector("#exitRoomBtn2").addEventListener('click', () => {
-            exitRoom(lobbyIdStr);
+            askExitGame(lobbyIdStr);
         }, { signal: controller.signal });
     }).catch((error) => {
         console.error(error);
@@ -865,7 +867,7 @@ const exitRoom = (lobbyIdStr) => {
 
         sessionStorage.removeItem("lobbyId");
         sessionStorage.removeItem("isHost");
-
+        document.querySelector("#exitGameAsk").classList.add("hidden");
         gotoLobby0Div();
     }).catch((error) => {
         console.error(error);
@@ -1218,6 +1220,26 @@ function showJoin() {
     document.querySelector("#lobby0RulesDiv").classList.add("hidden");
     document.querySelectorAll(".joinRoom").forEach(el => el.classList.remove("hidden"));
     document.querySelectorAll(".createRoom").forEach(el => el.classList.add("hidden")); 
+}
+function askExitGame(lobbyIdStr){
+    document.querySelector("#exitGameAsk").classList.remove("hidden");
+    
+    const yesBtn = document.querySelector("#exitGameYesBtn");
+    const noBtn = document.querySelector("#exitGameNoBtn");
+    
+    const newYesBtn = yesBtn.cloneNode(true);
+    const newNoBtn = noBtn.cloneNode(true);
+    
+    yesBtn.replaceWith(newYesBtn);
+    noBtn.replaceWith(newNoBtn);
+    
+    document.querySelector("#exitGameYesBtn").addEventListener('click', () => {
+        exitRoom(lobbyIdStr);
+    }, { signal: controller.signal });
+    
+    document.querySelector("#exitGameNoBtn").addEventListener('click', () => {
+        document.querySelector("#exitGameAsk").classList.add("hidden");
+    }, { signal: controller.signal });
 }
 /************************************************************************************************************************************************
  * END OF FUNCTIONS
