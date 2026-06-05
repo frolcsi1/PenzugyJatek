@@ -119,7 +119,7 @@ function gotoLoginDiv(/*first = false*/) {
 
     console.log(1);
     signInAnonymously(auth).then((user) => {
-        console.info("Sikeres bejelentkezés! UID: " + user.uid);
+        console.info("Sikeres bejelentkezés! UID: " + user.user.uid);
         showError("Sikeres bejelentkezés!", 0);
         console.log(2);
         gotoLobby0Div();
