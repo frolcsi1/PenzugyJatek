@@ -162,7 +162,7 @@ function gotoLobby0Div() {
     hideAll();
     document.querySelector("#GameEndDiv").classList.add("hidden");
     document.querySelector("#lobby0Div").classList.remove("hidden");
-    document.querySelector("#userNh2").textContent = "Felhasználónév: " + (auth.currentUser.email.replace(emailDomain, ""));
+    //document.querySelector("#userNh2").textContent = "Felhasználónév: " + (auth.currentUser.email.replace(emailDomain, ""));
     document.querySelector("#pointsDiv").classList.add("hidden");
     document.querySelector("#wordDiv").classList.add("hidden");
     
