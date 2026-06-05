@@ -119,7 +119,7 @@ function gotoLoginDiv(/*first = false*/) {
 
     function signInAnonym() {
         signInAnonymously(auth).then((user) => {
-                gotoLoginDiv();
+            gotoLobby0Div();
         })
     }
 }
