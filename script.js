@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, /*createUserWithEmailAndPassword, signInWithEmailAndPassword,*/ onAuthStateChanged, /*signOut,*/ signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref, get, set, onValue, remove, update, onDisconnect, query, orderByKey, equalTo } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
 
 
@@ -34,8 +34,8 @@ let onValueMainChars = null;
 let onValueAnswers = null;
 let errorTimeout = null;
 const errorDiv = document.querySelector("#errorDiv");
-let autoLogin = true;
-const emailDomain = "@penzugyjatek.notexists"
+//let autoLogin = true;
+//const emailDomain = "@penzugyjatek.notexists"
 let newPlayersAllowed = true
 let letters = [];
 let players = {};
@@ -89,14 +89,15 @@ function gotoPrivacyPolicy() {
     }, { signal: controller.signal });
 
     document.querySelector("#privacyPolicyContinue0").addEventListener('click', () => {
-        gotoLoginDiv(autoLogin);
+        gotoLoginDiv(/*autoLogin*/);
     }, { signal: controller.signal });
     document.querySelector("#privacyPolicyContinue1").addEventListener('click', () => {
-        gotoLoginDiv(autoLogin);
+        gotoLoginDiv(/*autoLogin*/);
     }, { signal: controller.signal });
 }
 
-function gotoLoginDiv(first = false) {
+function gotoLoginDiv(/*first = false*/) {
+    /*
     if (first) {
         autoLogin = false;
         onAuthStateChanged(auth, (user) => {
@@ -114,7 +115,13 @@ function gotoLoginDiv(first = false) {
     
     clearEventListeners();
     document.querySelector("#signinBtn").addEventListener('click', signIn, { signal: controller.signal });
-    document.querySelector("#signupBtn").addEventListener('click', signUp, { signal: controller.signal });
+    document.querySelector("#signupBtn").addEventListener('click', signUp, { signal: controller.signal });*/
+
+    function signInAnonym() {
+        signInAnonymously(auth).then((user) => {
+                gotoLoginDiv();
+        })
+    }
 }
 
 function gotoLobby0Div() {
@@ -589,7 +596,7 @@ function gotoGameEnd(lobbyIdStr) {
         findError(error);
     });
 }
-
+/*
 const signUp = () => {
     clearEventListeners();
 
@@ -644,7 +651,7 @@ const signIn = () => {
         document.querySelector("#signupBtn").addEventListener('click', signUp, { signal: controller.signal });
     });
 }
-
+*/
 const createLobby = () => {
     clearEventListeners();
 
