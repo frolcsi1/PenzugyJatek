@@ -117,14 +117,17 @@ function gotoLoginDiv(/*first = false*/) {
     document.querySelector("#signinBtn").addEventListener('click', signIn, { signal: controller.signal });
     document.querySelector("#signupBtn").addEventListener('click', signUp, { signal: controller.signal });*/
 
+    console.log(1);
     signInAnonymously(auth).then((user) => {
         console.info("Sikeres bejelentkezés! UID: " + user.uid);
         showError("Sikeres bejelentkezés!", 0);
+        console.log(2);
         gotoLobby0Div();
     });
 }
 
 function gotoLobby0Div() {
+    console.log(3);
     const lobbyIdSession = sessionStorage.getItem("lobbyId");
     const isHost = sessionStorage.getItem("isHost");
     if (lobbyIdSession) {
