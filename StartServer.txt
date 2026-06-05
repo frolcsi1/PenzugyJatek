@@ -1,2 +1,0 @@
-Kiegészítők / Extensions -> Live server (Ritwick Dey) -> telepítés -> Várakozás -> Jobb alsó sarok: Go live
-AZTÁN NE FELEJTSD EL LEZÁRNI: Port: 5500
