@@ -117,11 +117,11 @@ function gotoLoginDiv(/*first = false*/) {
     document.querySelector("#signinBtn").addEventListener('click', signIn, { signal: controller.signal });
     document.querySelector("#signupBtn").addEventListener('click', signUp, { signal: controller.signal });*/
 
-    function signInAnonym() {
-        signInAnonymously(auth).then((user) => {
-            gotoLobby0Div();
-        })
-    }
+    signInAnonymously(auth).then((user) => {
+        console.info("Sikeres bejelentkezés! UID: " + user.uid);
+        showError("Sikeres bejelentkezés!", 0);
+        gotoLobby0Div();
+    });
 }
 
 function gotoLobby0Div() {
